@@ -143,14 +143,13 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 		numreps = 0;
 		Serial.println("benchpress...");
 	}
-	if (numreps < reps) {
+	if (numreps < 5) {
 		vnow = (vlast + (0.01 * (buf_smooth_WORLDACCEL[2][data_ptr] - still_zoffset)));
 		height = height + (0.01 * vlast) + (0.50 * 0.01 * vnow);
-		vlast = vnow;
-		velocity[2][data_ptr] = vnow;
 		if (height >= h_max) h_max = height;
 		if (height <= h_min) h_min = height;
-		
+		vlast = vnow;
+		velocity[2][data_ptr] = vnow;
 
 		//Serial.print("reps completed: "); Serial.println(numreps);
 		//Serial.print("height: ");
@@ -161,23 +160,25 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 		Serial.print(buf_smooth_WORLDACCEL[2][data_ptr]);
 		//Serial.println();
 		//Serial.print(h_max);
-		Serial.print(", ");
-		//Serial.print(" reps: ");
-		Serial.print(numreps);
+		Serial.print(" reps: ");
+		Serial.println(numreps);
 
 		still = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 4, 4);
 		//if (velocity[2][data_ptr]> 75 || velocity[2][data_ptr] < -75)
 		dir = directionDetect(velocity, data_ptr, 0, 3);
-		
 		//		if (dir_last == -200 && dir != -200 && h_max > BENCHPRESS_MAX) {
 		if (h_max > BENCHPRESS_MAX && dir_last == -200 && dir != -200) {	//ERROR RESET 
-			h_max = 0;
-			height = 0;
-			vnow = 0;
-			vlast = 0;
+			//h_max = 0;
+			//height = 0;
+			//vnow = 0;
+			//vlast = 0;
 			numreps++;
 		}
-		else if (still == 1) {
+		dir_last = dir;
+		//Serial.print(" dir: ");
+		//Serial.println(dir);
+
+		if (still == 1) {
 			//Serial.println("reset");
 			height = 0;
 			vlast = 0;
@@ -185,12 +186,8 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 			dir_last = 0;
 			dir = 0;
 		}
-		dir_last = dir;
-		Serial.print(", ");
-		Serial.println(dir);
-
 	}
-	if (numreps == reps) {
+	if (numreps == 5) {
 		numreps = -1;
 		state = cooldown;
 		laststate = benchpress;
