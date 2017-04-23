@@ -1,6 +1,7 @@
 #include "common.h"
 #include "Arduino.h"
 #include "utilities.h"
+#include "EEPROM.h"
 
 void _curls(float buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, int &state, int &laststate, int buttonState, int reps) {
 	static int numreps = -1;
