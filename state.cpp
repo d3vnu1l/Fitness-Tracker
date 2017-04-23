@@ -47,21 +47,12 @@ void _chooseExercise(int &state, int &laststate, int buttonState, int encoderPos
 	  {
 	  case 0:
 		  Serial.println("Curls");
-		  EEPROM.write(1, 00);
-		  Serial.print("This is ");
-		  Serial.println(EEPROM.read(A0));
 		  break;
 	  case 1:
 		  Serial.println("Bench Press");
-		  EEPROM.write(2, 01);
-		  Serial.print("This is ");
-		  EEPROM.read(2);
 		  break;
 	  case 2:
 		  Serial.println("Squats");
-		  EEPROM.write(3, 02);
-		  Serial.print("This is ");
-		  EEPROM.read(3);
 		  break;
 	  }
 	  state = chooseWeight;
@@ -90,8 +81,6 @@ void _chooseWeight(int &state, int &laststate, int &buttonState, int &encoderPos
 	  triggered = true;
   }
   else {
-	  EEPROM.write(4, weight);
-	  EEPROM.read(4);
 	  state = warmup;
 	  laststate = chooseWeight;
   }
