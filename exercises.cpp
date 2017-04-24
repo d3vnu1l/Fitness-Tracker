@@ -4,14 +4,15 @@
 #include "EEPROM.h"
 
 void _curls(float buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, int &state, int &laststate, int buttonState, int reps) {
-	static int numreps = -1;
-	static float min = 90, max = 0;
+	static int numreps = -1;							//number of repetitions
+	static float min = 90, max = 0;						//track curl span
 	static bool ready = false;
 	static bool pivot = false, up = false;
 	static float level = 0;
 	static int record = 0;
 	static int count = 0;
 	static float angle[BUFFER_SIZE];
+	static unsigned long timer;							//time between reps
 
 	angle[data_ptr] = abs((abs(buf_YPR[1][data_ptr]) + abs(buf_YPR[2][data_ptr])) - level);
 
@@ -37,9 +38,10 @@ void _curls(float buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZ
 				Serial.println("move device to level position to begin");
 			}
 			if (count >= 100) {				//reaching 100 stable cycles begins workout
-				numreps = 0;
+				numreps = 0;		
 				count = 0;
 				numreps = 0;
+				timer = millis();
 				Serial.print("Repetitions: ");
 				Serial.println(numreps);
 			}
@@ -109,9 +111,12 @@ void _curls(float buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZ
 				
 				Serial.print("Reps: ");
 				Serial.print(numreps);
-				Serial.print(", Degrs ");
-				Serial.println(max);
+				Serial.print(", Degrs: ");
+				Serial.print(max);
 				max = 0;
+				Serial.print(", time: ");
+				Serial.println(millis()-timer);
+				timer = millis();
 				if (numreps > record) {
 					record = numreps;
 					Serial.println("previous record has been broken!");
@@ -121,7 +126,7 @@ void _curls(float buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZ
 		if (angle[data_ptr] < min)
 			min = angle[data_ptr];
 	}
-	else if (numreps != -1 && buttonState == HIGH) {
+	else if (numreps != -1 && buttonState == HIGH) {											//assign next state here
 		numreps = -1;
 		state = cooldown;
 		laststate = curls;

@@ -1,6 +1,5 @@
-// 
-// 
-// 
+// Arduino does not provide built in functions for eeprom int and long functions
+//		These are built here
 #include "Arduino.h"
 #include "eepromUtilities.h"
 #include "common.h"
@@ -45,4 +44,26 @@ long readLong(long address){
 
 	//Return the recomposed long by using bitshift.
 	return ((four << 0) & 0xFF) + ((three << 8) & 0xFFFF) + ((two << 16) & 0xFFFFFF) + ((one << 24) & 0xFFFFFFFF);
+}
+
+void writeInt(int address, int value) {
+	byte two = (value & 0xFF);
+	byte one = ((value >> 8) & 0xFF);
+
+	EEPROM.write(address, two);
+	EEPROM.write(address+1, one);
+}
+
+void updateInt(int address, int value) {
+	byte two = (value & 0xFF);
+	byte one = ((value >> 8) & 0xFF);
+
+	EEPROM.update(address, two);
+	EEPROM.update(address + 1, one);
+}
+int readInt(int address) {
+	int two = EEPROM.read(address);
+	int one = EEPROM.read(address + 1);
+
+	return ((two << 0) & 0xFF) + ((one << 8) & 0xFFFF);
 }

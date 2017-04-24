@@ -12,6 +12,9 @@
 void writeLong(int, long);
 void updateLong(int, long);
 long readLong(long);
+void writeInt(int, int);
+void updateInt(int, int);
+int readInt(int);
 
 #endif
 
