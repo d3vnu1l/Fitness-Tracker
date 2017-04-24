@@ -2,19 +2,19 @@
 #include "utilities.h"
 #include "Arduino.h"
 #include "EEPROM.h"
+#include "eepromUtilities.h"
 
-int mode = 0;
+int mode = 0;						//used in mapping encoder to exercise selection
 
 void _start(int &state, int &laststate) {
   Serial.println("Rotate upper dial to enter an exercise");
-  //Serial.println(A0);
-  //Serial.println(A1);
   state = chooseExercise;
   laststate = start;
 }
+
 void _chooseExercise(int &state, int &laststate, int buttonState, int encoderPos) {
-  static int last_encoderPos = 0;
-  static bool triggered = false;
+  static int last_encoderPos = 0;				//encoder tracking
+  static bool triggered = false;				//debounce button
   if (buttonState == LOW && triggered == false) {
     if (last_encoderPos > encoderPos) {
       if (mode != 0)
@@ -59,19 +59,19 @@ void _chooseExercise(int &state, int &laststate, int buttonState, int encoderPos
 	  laststate = state;
   }
 }
-void _chooseWeight(int &state, int &laststate, int &buttonState, int &encoderPos) {
-  static int weight = 150;
+void _chooseWeight(int &state, int &laststate, int buttonState, int encoderPos) {
+  static int weight = readInt(WEIGHT_ADDR);				//fetch weight from eeprom
   static int last_encoderPos = 0;
   static bool triggered = false;
   if (buttonState == LOW && triggered==false)
   {
     if (last_encoderPos > encoderPos) {
       if (weight > 0)
-        weight -= 10;
+        weight -= 1;
     }
     else if (last_encoderPos < encoderPos) {
       if (weight < 500)
-        weight += 10;
+        weight += 1;
     }
     Serial.print("Weight is ");
     Serial.println(weight);
@@ -81,6 +81,7 @@ void _chooseWeight(int &state, int &laststate, int &buttonState, int &encoderPos
 	  triggered = true;
   }
   else {
+	  updateInt(WEIGHT_ADDR, weight);						//update weight in eeprom
 	  state = warmup;
 	  laststate = chooseWeight;
   }

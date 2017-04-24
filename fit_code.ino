@@ -3,6 +3,8 @@
 #include "dmp.h"
 #include "exercises.h"
 #include "state.h"
+#include "eepromUtilities.h"
+#include "EEPROM.h"
 
 // ================================================================
 // ===               Global Vars                                ===
@@ -34,6 +36,8 @@ void setup() {
 	pinMode(ENCODERPINA, INPUT);
 	pinMode(ENCODERPINB, INPUT);
 	pinMode(SLED, OUTPUT);
+	//EEPROM.write(0, 0);	//force reset
+	if (EEPROM.read(INITIALIZED_ADDR) == 0) resetMemory();				//configure memory if first time use
 	initBuffers(buf_YPR, buf_WORLDACCEL, buf_smooth_WORLDACCEL);
 	dmp_init();
 	time = millis();

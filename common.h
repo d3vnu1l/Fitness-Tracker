@@ -14,7 +14,12 @@
 #define BUFFER_SIZE 64
 #define PEAK_SENS 30			//samples to watch for peak
 #define SENSITIVITY 100
-
+/*
+	Manual Memory Map
+*/
+#define INITIALIZED_ADDR  0	//(8 bit)
+#define WEIGHT_ADDR       2	//(16 bit)
+#define LASTEXERCISE_ADDR 4 //(8 bit)
 /*
 	CURL PARAMETERS
 */

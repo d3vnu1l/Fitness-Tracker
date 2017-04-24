@@ -15,6 +15,7 @@ long readLong(long);
 void writeInt(int, int);
 void updateInt(int, int);
 int readInt(int);
+void resetMemory(void);
 
 #endif
 
