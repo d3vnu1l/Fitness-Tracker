@@ -16,10 +16,16 @@
 #define SENSITIVITY 100
 /*
 	Manual Memory Map
+
 */
 #define INITIALIZED_ADDR  0	//(8 bit)
 #define WEIGHT_ADDR       2	//(16 bit)
 #define LASTEXERCISE_ADDR 4 //(8 bit)
+
+#define CURLS_BASEMEM 64	//base memory address for curl data
+#define CAT_ADDR (CURLS_BASEMEM)	//curls average time
+#define CAA_ADDR (CURLS_BASEMEM+2)	//curls average acceleration
+#define CAS_ADDR (CURLS_BASEMEM+4)	//curls average ecceleration
 /*
 	CURL PARAMETERS
 */
