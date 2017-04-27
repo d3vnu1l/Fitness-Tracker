@@ -3,7 +3,9 @@
 #include "utilities.h"
 #include "EEPROM.h"
 
-void _curls(float buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, int &state, int &laststate, int buttonState, int reps) {
+extern int state, laststate;
+
+void _curls(float buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, bool buttonState, int reps) {
 	static int numreps = -1;							//number of repetitions
 	static float min = 90, max = 0;						//track curl span
 	static bool ready = false;
@@ -18,9 +20,9 @@ void _curls(float buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZ
 
 	if (numreps == -1) {
 
-		if (buttonState == LOW && ready == false)
+		if (buttonState == false && ready == false)
 			Serial.println("Level device and press the button to store calibration...");
-		else if (buttonState == HIGH && ready == false) {
+		else if (buttonState == true && ready == false) {
 			level = angle[data_ptr];
 			ready = true;
 
@@ -47,9 +49,8 @@ void _curls(float buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZ
 			}
 		}
 	}
-	else if (numreps != -1 && buttonState == LOW) {
+	else if (numreps != -1 && numreps < reps && buttonState == false) {
 		int amag = ((buf_smooth_WORLDACCEL[2][data_ptr]));
-
 
 		//Serial.print(amag);
 		//Serial.print(abs(buf_RAWACCEL[0][data_ptr]));
@@ -126,14 +127,14 @@ void _curls(float buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZ
 		if (angle[data_ptr] < min)
 			min = angle[data_ptr];
 	}
-	else if (numreps != -1 && buttonState == HIGH) {											//assign next state here
+	else if (numreps != -1 && buttonState == true) {											//assign next state here
 		numreps = -1;
 		state = cooldown;
 		laststate = curls;
 	}
 }
 
-void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, int &state, int &laststate, int reps) {
+void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, int reps) {
 	static int numreps = -1;
 	static int velocity[3][BUFFER_SIZE];
 	static float vlast = 0;
@@ -199,7 +200,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 		laststate = benchpress;
 	}
 }
-void _squats(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, int &state, int &laststate, int reps) {
+void _squats(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, int reps) {
 	static int numreps = -1;
 	static int velocity[3][BUFFER_SIZE];
 	static float vlast = 0;
@@ -212,7 +213,7 @@ void _squats(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, in
 		numreps = 0;
 		Serial.println("squats...");
 	}
-	if (numreps < 5) {
+	if (numreps < reps) {
 		//still = detectStill(velocity, 15);
 		if (still == 1) {
 			height = 0;
@@ -224,7 +225,7 @@ void _squats(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, in
 		vlast = vnow;
 		velocity[2][data_ptr] = vnow;
 	}
-	if (numreps == 5) {
+	if (numreps == reps) {
 		numreps = -1;
 		state = cooldown;
 		laststate = squats;

@@ -41,44 +41,47 @@ void setup() {
 
 void loop() {
 	static bool processedData = false;
+	static bool buttonPress = false;
+	static bool encoderChange = false;
 
 	//************************************************************************************************************
 	while (!mpuInterrupt && fifoCount < packetSize) {
-		bool buttonState = buttonPressed();		//button state var
-		int encoderChange = encoderPressed();	//encoder state var
+		//IDLE WORK GOES HERE
+		if (buttonPress == true && processedData == true);			//holds button press while system is idling
+		else buttonPress = buttonPressed();
+		encoderChange = encoderPressed();	//encoder state var
 
+
+		//STATES RECEIVE GO HERE: (update rate = 100 Hz)
 		if (processedData == false) {
-			//EXERCISE STATES RECEIVE GO HERE: (update rate = 100 Hz)
+			if (state == mainMenu)                                                                 //start
+			{
+				_mainMenu();
+			}
+			else if (state == wod)                                                   //chooseexercise
+			{
+				_wod(buttonPress, encoderChange);
+			}
+			else if (state == chooseWeight)                                                     //chooseweight
+			{
+				_chooseWeight(buttonPress, encoderChange);
+			}
+			else if (state == warmup) {                                                          //warmup
+				_warmup(time);
+			}
+			else if (state == cooldown) {                                                        //cooldown
+				_cooldown();
+			}
 			if (state == curls) {   //curls
-				_curls(buf_YPR, buf_smooth_WORLDACCEL, data_ptr, state, laststate, buttonState, 200);
+				_curls(buf_YPR, buf_smooth_WORLDACCEL, data_ptr, buttonPress, 200);
 			}
 			else if (state == benchpress) {                           
-				_benchpress(buf_smooth_WORLDACCEL, data_ptr, state, laststate, 40);
+				_benchpress(buf_smooth_WORLDACCEL, data_ptr, 200);
 			}
 			else if (state == squats) {                                                                 
-				_squats(buf_smooth_WORLDACCEL, data_ptr, state, laststate, 5);
+				_squats(buf_smooth_WORLDACCEL, data_ptr, 200);
 			}
 			processedData = true;
-		}
-
-		//OTHER STATES THAT DONT RELY ON MPU DATA GO HERE:
-		if (state == mainMenu)                                                                 //start
-		{
-			_mainMenu();
-		}
-		else if (state == wod)                                                   //chooseexercise
-		{
-			_wod(buttonState, encoderChange);
-		}
-		else if (state == chooseWeight)                                                     //chooseweight
-		{
-			_chooseWeight(buttonState, encoderChange);
-		}
-		else if (state == warmup) {                                                          //warmup
-			_warmup(time);
-		}
-		else if (state == cooldown) {                                                        //cooldown
-			_cooldown();
 		}
 	}
 	//************************************************************************************************************
