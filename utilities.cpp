@@ -44,6 +44,7 @@ bool buttonPressed() {
 	}
 }
 
+//clears buffers to zero. generally only called from the setup() function in main
 void initBuffers(float buf_YPR[][BUFFER_SIZE], int buf_WORLDACCEL[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE]) {
 	for (int i = 0; i < BUFFER_SIZE; i++) {
 		buf_YPR[0][i] = 0.0;
@@ -60,19 +61,21 @@ void initBuffers(float buf_YPR[][BUFFER_SIZE], int buf_WORLDACCEL[][BUFFER_SIZE]
 	}
 }
 
-/* Description: returns the filtered result of a sample using formula: y(i)= alpha*x(i)+(1-alpha)*y(i-1)
+/* Description: places the filtered result from rough array into smooth array using formula: y(i)= alpha*x(i)+(1-alpha)*y(i-1)
 	  note; this can be done much quicker using fixed point math.
 	  also, because this is an IIR filter, it takes a few samples to stabilize.
    Usage: change alpha to change frequency cutoff.
 	  fs=sample rate (100hz), fp=1/fs, RC=fp*((1-alpha)/alpha)
 	  cutoff frequency = (1/(2*pi*RC))
 */
-int iirLPF(int newsample, int last_sample, float alpha) {
-	//static int last_sample = 0;
+void iirLPF(int rough[3][BUFFER_SIZE], int smooth[3][BUFFER_SIZE], unsigned int pointer, int axis, float alpha) {
+	unsigned int last;
+	if (pointer == 0)
+		last = (BUFFER_SIZE - 1);
+	else last = (pointer - 1);
 	static float alpha_inverse;
 	alpha_inverse = 1 - alpha;
-	last_sample = alpha * newsample + alpha_inverse * last_sample;
-	return last_sample;
+	smooth[axis][pointer] = alpha * rough[axis][pointer] + alpha_inverse * smooth[axis][last];
 }
 
 
@@ -135,6 +138,8 @@ int directionDetect(int varray[3][BUFFER_SIZE], unsigned int array_ptr, int stil
 }
 
 int detectStill(int garray[3][BUFFER_SIZE], unsigned int array_ptr, int &still_zoffset, int still_size, int tolerance) {
+
+	
 	int last = array_ptr;
 	int match = garray[2][last];
 	int match_h = match + tolerance;

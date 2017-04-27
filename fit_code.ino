@@ -41,7 +41,6 @@ void setup() {
 
 void loop() {
 	static bool processedData = false;
-	unsigned int last;
 
 	while (!mpuInterrupt && fifoCount < packetSize) {
 		bool buttonState = buttonPressed();		//button state var
@@ -84,10 +83,7 @@ void loop() {
 	dmp_sample(buf_YPR, buf_WORLDACCEL, buf_RAWACCEL, data_ptr);
 
 	//2. filter new sample//
-	if (data_ptr == 0)
-		last = (BUFFER_SIZE - 1);
-	else last = (data_ptr - 1);
-	buf_smooth_WORLDACCEL[2][data_ptr] = iirLPF(buf_WORLDACCEL[2][data_ptr], buf_smooth_WORLDACCEL[2][last], 0.22);  
+	iirLPF(buf_WORLDACCEL, buf_smooth_WORLDACCEL, data_ptr, 2, 0.22);  
 
 	//3. flag for new data//
 	processedData = false;
