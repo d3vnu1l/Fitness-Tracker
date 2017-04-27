@@ -41,7 +41,10 @@ enum states
 	curls,
 	benchpress,
 	squats,
-	cooldown
+	cooldown,
+	//settings
+	update,
+	connectBT,
 };
 
 #endif  /* UTILITIES_H */

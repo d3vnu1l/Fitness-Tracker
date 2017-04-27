@@ -3,27 +3,30 @@
 #include "Wire.h"
 #include "Arduino.h"
 
-void readEncoder(int &encoderPos, int &last_encoderPos) {
+
+//Returns one of 3 values;
+// 0  -no movement
+// 1  -clockwise
+//-1  -counterclockwise
+int readEncoder() {
 	static int encoder0PinALast = LOW;
+
 	int n = LOW;
-	last_encoderPos = encoderPos;
 	n = digitalRead(ENCODERPINA);
 	if ((encoder0PinALast == LOW) && (n == HIGH)) {
 		if (digitalRead(ENCODERPINB) == LOW) {
-			if (encoderPos == 32767)
-				encoderPos == -32767;             //wrap around, prevent overflow
-			else {
-				encoderPos++;
-			}
+			encoder0PinALast = n;
+			return 1;
 		}
 		else {
-			if (encoderPos == -32767)
-				encoderPos == +32767;             //wrap around, prevent overflow
-			else {
-				encoderPos--;
-			}
+			encoder0PinALast = n;
+			return -1;
 		}
-	} encoder0PinALast = n;
+	} 
+	else {
+		encoder0PinALast = n;
+		return 0;
+	}
 }
 
 void readButton(int &buttonState) {

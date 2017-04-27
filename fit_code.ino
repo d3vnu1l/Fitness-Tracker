@@ -13,9 +13,6 @@
 int buttonState;
 int state = start, laststate;
 unsigned long time = 0;
-//ENCODER VARS//
-int encoderPos = 0;
-int last_encoderPos = 0;
 
 //MPU VARS//
 extern uint16_t packetSize;
@@ -39,6 +36,7 @@ void setup() {
 	//EEPROM.write(0, 0);	//force reset
 	if (EEPROM.read(INITIALIZED_ADDR) == 0) resetMemory();				//configure memory if first time use
 	initBuffers(buf_YPR, buf_WORLDACCEL, buf_smooth_WORLDACCEL);
+	_start(state, laststate);
 	dmp_init();
 	time = millis();
 }
@@ -49,7 +47,7 @@ void loop() {
 
 	while (!mpuInterrupt && fifoCount < packetSize) {
 		readButton(buttonState);
-		readEncoder(encoderPos, last_encoderPos);
+		int encoderChange = readEncoder();
 		if (processedData == false) {
 			//EXERCISES GO HERE
 			if (state == curls) {   //curls
@@ -70,11 +68,11 @@ void loop() {
 		}
 		else if (state == chooseExercise)                                                     //chooseexercise
 		{
-			_chooseExercise(state, laststate, buttonState, encoderPos);
+			_chooseExercise(state, laststate, buttonState, encoderChange);
 		}
 		else if (state == chooseWeight)                                                           //chooseweight
 		{
-			_chooseWeight(state, laststate, buttonState, encoderPos);
+			_chooseWeight(state, laststate, buttonState, encoderChange);
 		}
 		else if (state == warmup) {                                                                 //warmup
 			_warmup(state, laststate, time);
@@ -91,9 +89,7 @@ void loop() {
 	if (data_ptr == 0)
 		last = (BUFFER_SIZE - 1);
 	else last = (data_ptr - 1);
-	buf_smooth_WORLDACCEL[2][data_ptr] = iirLPF(buf_WORLDACCEL[2][data_ptr], buf_smooth_WORLDACCEL[2][last], 0.22);
-	//buf_smooth_WORLDACCEL[1][data_ptr] = iirLPF(buf_WORLDACCEL[1][data_ptr], 0.21);
-	//buf_smooth_WORLDACCEL[0][data_ptr] = iirLPF(buf_WORLDACCEL[0][data_ptr], 0.21);
+	buf_smooth_WORLDACCEL[2][data_ptr] = iirLPF(buf_WORLDACCEL[2][data_ptr], buf_smooth_WORLDACCEL[2][last], 0.22);  
 
 	//3. flag for new data//
 	processedData = false;

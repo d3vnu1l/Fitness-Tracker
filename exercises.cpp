@@ -230,5 +230,7 @@ void _squats(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, in
 		laststate = squats;
 	}
 }
-
+void _fitnessTest() {
+	//needs implementation
+}
 

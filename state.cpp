@@ -7,20 +7,20 @@
 int mode = 0;						//used in mapping encoder to exercise selection
 
 void _start(int &state, int &laststate) {
-  Serial.println("Rotate upper dial to enter an exercise");
-  state = chooseExercise;
-  laststate = start;
+	state = chooseExercise;
+	laststate = start;
+  //wod
+  //settings
 }
 
-void _chooseExercise(int &state, int &laststate, int buttonState, int encoderPos) {
-  static int last_encoderPos = 0;				//encoder tracking
+void _chooseExercise(int &state, int &laststate, int buttonState, int encoderChange) {
   static bool triggered = false;				//debounce button
   if (buttonState == LOW && triggered == false) {
-    if (last_encoderPos > encoderPos) {
+    if (encoderChange == -1) {
       if (mode != 0)
         mode--;
     }
-    else if (last_encoderPos < encoderPos) {
+    else if (encoderChange == 1) {
       if (mode != 2)
         mode++;
     }
@@ -36,7 +36,6 @@ void _chooseExercise(int &state, int &laststate, int buttonState, int encoderPos
         Serial.println("Squats\r");
         break;
     }
-    last_encoderPos = encoderPos;
   }
   else if (buttonState==HIGH){
 	  triggered = true;
@@ -59,23 +58,21 @@ void _chooseExercise(int &state, int &laststate, int buttonState, int encoderPos
 	  laststate = state;
   }
 }
-void _chooseWeight(int &state, int &laststate, int buttonState, int encoderPos) {
+void _chooseWeight(int &state, int &laststate, int buttonState, int encoderChange) {
   static int weight = readInt(WEIGHT_ADDR);				//fetch weight from eeprom
-  static int last_encoderPos = 0;
   static bool triggered = false;
   if (buttonState == LOW && triggered==false)
   {
-    if (last_encoderPos > encoderPos) {
+    if (encoderChange == -1) {
       if (weight > 0)
         weight -= 1;
     }
-    else if (last_encoderPos < encoderPos) {
+    else if (encoderChange == 1) {
       if (weight < 500)
         weight += 1;
     }
     Serial.print("Weight is ");
     Serial.println(weight);
-    last_encoderPos = encoderPos;
   }
   else if (buttonState==HIGH){
 	  triggered = true;

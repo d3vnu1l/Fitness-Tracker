@@ -2,7 +2,7 @@
 #define  UTILITIES_H_
 #include "common.h"
 
-void readEncoder(int &, int &);
+int readEncoder();
 void readButton(int &);
 void initBuffers(float [][BUFFER_SIZE], int [][BUFFER_SIZE], int[][BUFFER_SIZE]);
 void printBuffers(void);
