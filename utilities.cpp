@@ -8,7 +8,7 @@
 // 0  -no movement
 // 1  -clockwise
 //-1  -counterclockwise
-int readEncoder() {
+int encoderPressed() {
 	static int encoder0PinALast = LOW;
 
 	int n = LOW;
@@ -29,8 +29,19 @@ int readEncoder() {
 	}
 }
 
-void readButton(int &buttonState) {
-	buttonState = digitalRead(BUTTONPIN);
+//returns button press status
+//true only once for each button press
+bool buttonPressed() {
+	static int buttonState = 0;
+	int b = digitalRead(BUTTONPIN);
+	if (b==1 && buttonState != b) {
+		buttonState = b;
+		return true;
+	}
+	else {
+		buttonState = b;
+		return false;
+	}
 }
 
 void initBuffers(float buf_YPR[][BUFFER_SIZE], int buf_WORLDACCEL[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE]) {

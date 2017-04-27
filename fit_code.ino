@@ -9,8 +9,7 @@
 // ================================================================
 // ===               Global Vars                                ===
 // ================================================================
-//BUTTONS & MISC VARS//
-int buttonState;
+//MISC VARS//
 int state = start, laststate;
 unsigned long time = 0;
 
@@ -36,7 +35,6 @@ void setup() {
 	//EEPROM.write(0, 0);	//force reset
 	if (EEPROM.read(INITIALIZED_ADDR) == 0) resetMemory();				//configure memory if first time use
 	initBuffers(buf_YPR, buf_WORLDACCEL, buf_smooth_WORLDACCEL);
-	_start(state, laststate);
 	dmp_init();
 	time = millis();
 }
@@ -46,8 +44,8 @@ void loop() {
 	unsigned int last;
 
 	while (!mpuInterrupt && fifoCount < packetSize) {
-		readButton(buttonState);
-		int encoderChange = readEncoder();
+		bool buttonState = buttonPressed();		//button state var
+		int encoderChange = encoderPressed();	//encoder state var
 		if (processedData == false) {
 			//EXERCISES GO HERE
 			if (state == curls) {   //curls

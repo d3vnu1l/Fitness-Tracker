@@ -2,8 +2,8 @@
 #define  UTILITIES_H_
 #include "common.h"
 
-int readEncoder();
-void readButton(int &);
+int encoderPressed();
+bool buttonPressed();
 void initBuffers(float [][BUFFER_SIZE], int [][BUFFER_SIZE], int[][BUFFER_SIZE]);
 void printBuffers(void);
 int iirLPF(int, int, float);

@@ -13,9 +13,8 @@ void _start(int &state, int &laststate) {
   //settings
 }
 
-void _chooseExercise(int &state, int &laststate, int buttonState, int encoderChange) {
-  static bool triggered = false;				//debounce button
-  if (buttonState == LOW && triggered == false) {
+void _chooseExercise(int &state, int &laststate, bool buttonState, int encoderChange) {
+  if (buttonState == false) {
     if (encoderChange == -1) {
       if (mode != 0)
         mode--;
@@ -37,9 +36,6 @@ void _chooseExercise(int &state, int &laststate, int buttonState, int encoderCha
         break;
     }
   }
-  else if (buttonState==HIGH){
-	  triggered = true;
-  }
   else {
 	  //write finalized value
 	  switch (mode)
@@ -58,10 +54,9 @@ void _chooseExercise(int &state, int &laststate, int buttonState, int encoderCha
 	  laststate = state;
   }
 }
-void _chooseWeight(int &state, int &laststate, int buttonState, int encoderChange) {
+void _chooseWeight(int &state, int &laststate, bool buttonState, int encoderChange) {
   static int weight = readInt(WEIGHT_ADDR);				//fetch weight from eeprom
-  static bool triggered = false;
-  if (buttonState == LOW && triggered==false)
+  if (buttonState == false)
   {
     if (encoderChange == -1) {
       if (weight > 0)
@@ -73,9 +68,6 @@ void _chooseWeight(int &state, int &laststate, int buttonState, int encoderChang
     }
     Serial.print("Weight is ");
     Serial.println(weight);
-  }
-  else if (buttonState==HIGH){
-	  triggered = true;
   }
   else {
 	  updateInt(WEIGHT_ADDR, weight);						//update weight in eeprom
