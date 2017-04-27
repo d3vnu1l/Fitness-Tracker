@@ -3,9 +3,9 @@
 #include "Arduino.h"
 #include "EEPROM.h"
 #include "eepromUtilities.h"
-int mode = 0;						//used in mapping encoder to exercise selection
 
 extern int state, laststate;
+static int mode = 0;
 
 void _mainMenu() {
 	state = wod;
@@ -78,8 +78,8 @@ void _chooseWeight(bool buttonState, int encoderChange) {
 	  laststate = chooseWeight;
   }
 }
+
 void _warmup(unsigned long &time) {
-  //a timer needds to be started on device powereup. checck for 10 seconds warmup here
   if ((time / 1000) < 3) {
     Serial.print("Waiting: ");
     Serial.print(time / 1000);

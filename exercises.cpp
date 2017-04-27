@@ -149,7 +149,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 		numreps = 0;
 		Serial.println("benchpress...");
 	}
-	if (numreps < 5) {
+	if (numreps < reps) {
 		vnow = (vlast + (0.01 * (buf_smooth_WORLDACCEL[2][data_ptr] - still_zoffset)));
 		height = height + (0.01 * vlast) + (0.50 * 0.01 * vnow);
 		if (height >= h_max) h_max = height;
@@ -174,10 +174,10 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 		dir = directionDetect(velocity, data_ptr, 0, 3);
 		//		if (dir_last == -200 && dir != -200 && h_max > BENCHPRESS_MAX) {
 		if (h_max > BENCHPRESS_MAX && dir_last == -200 && dir != -200) {	//ERROR RESET 
-			//h_max = 0;
-			//height = 0;
-			//vnow = 0;
-			//vlast = 0;
+			h_max = 0;
+			height = 0;
+			vnow = 0;
+			vlast = 0;
 			numreps++;
 		}
 		dir_last = dir;
@@ -186,14 +186,14 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 
 		if (still == 1) {
 			//Serial.println("reset");
-			height = 0;
+			//height = 0;
 			vlast = 0;
 			vnow = 0;
 			dir_last = 0;
 			dir = 0;
 		}
 	}
-	if (numreps == 5) {
+	if (numreps == reps) {
 		numreps = -1;
 		state = cooldown;
 		laststate = benchpress;
