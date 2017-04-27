@@ -34,17 +34,21 @@
 
 enum states
 {
-	start,
-	chooseExercise,
+	//menus
+	mainMenu,
+		fitnessTest,	//tbd
+		wod,
+		settings,
+		statistics,
+
 	chooseWeight,
+	//exercises
 	warmup,
 	curls,
 	benchpress,
 	squats,
+
 	cooldown,
-	//settings
-	update,
-	connectBT,
 };
 
 #endif  /* UTILITIES_H */

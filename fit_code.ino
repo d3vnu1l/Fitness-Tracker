@@ -10,7 +10,7 @@
 // ===               Global Vars                                ===
 // ================================================================
 //MISC VARS//
-int state = start, laststate;
+int state = 0, laststate = 0;
 unsigned long time = 0;
 
 //MPU VARS//
@@ -42,11 +42,13 @@ void setup() {
 void loop() {
 	static bool processedData = false;
 
+	//************************************************************************************************************
 	while (!mpuInterrupt && fifoCount < packetSize) {
 		bool buttonState = buttonPressed();		//button state var
 		int encoderChange = encoderPressed();	//encoder state var
+
 		if (processedData == false) {
-			//EXERCISES GO HERE
+			//EXERCISE STATES RECEIVE GO HERE: (update rate = 100 Hz)
 			if (state == curls) {   //curls
 				_curls(buf_YPR, buf_smooth_WORLDACCEL, data_ptr, state, laststate, buttonState, 200);
 			}
@@ -59,33 +61,35 @@ void loop() {
 			processedData = true;
 		}
 
-		if (state == start)                                                                   //start
+		//OTHER STATES THAT DONT RELY ON MPU DATA GO HERE:
+		if (state == mainMenu)                                                                 //start
 		{
-			_start(state, laststate);
+			_mainMenu();
 		}
-		else if (state == chooseExercise)                                                     //chooseexercise
+		else if (state == wod)                                                   //chooseexercise
 		{
-			_chooseExercise(state, laststate, buttonState, encoderChange);
+			_wod(buttonState, encoderChange);
 		}
-		else if (state == chooseWeight)                                                           //chooseweight
+		else if (state == chooseWeight)                                                     //chooseweight
 		{
-			_chooseWeight(state, laststate, buttonState, encoderChange);
+			_chooseWeight(buttonState, encoderChange);
 		}
-		else if (state == warmup) {                                                                 //warmup
-			_warmup(state, laststate, time);
+		else if (state == warmup) {                                                          //warmup
+			_warmup(time);
 		}
-		else if (state == cooldown) {                                                                 //cooldown
-			_cooldown(state, laststate);
+		else if (state == cooldown) {                                                        //cooldown
+			_cooldown();
 		}
 	}
-
+	//************************************************************************************************************
+	
 	//1. handle new data//
 	dmp_sample(buf_YPR, buf_WORLDACCEL, buf_RAWACCEL, data_ptr);
 
 	//2. filter new sample//
 	iirLPF(buf_WORLDACCEL, buf_smooth_WORLDACCEL, data_ptr, 2, 0.22);  
 
-	//3. flag for new data//
+	//3. flag that new data is available//
 	processedData = false;
 
 

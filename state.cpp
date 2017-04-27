@@ -3,17 +3,20 @@
 #include "Arduino.h"
 #include "EEPROM.h"
 #include "eepromUtilities.h"
-
 int mode = 0;						//used in mapping encoder to exercise selection
 
-void _start(int &state, int &laststate) {
-	state = chooseExercise;
-	laststate = start;
-  //wod
-  //settings
+extern int state, laststate;
+
+void _mainMenu() {
+	state = wod;
+	laststate = mainMenu;
+	//wod
+	//settings
+	//stats
+	//fitness test tbd
 }
 
-void _chooseExercise(int &state, int &laststate, bool buttonState, int encoderChange) {
+void _wod(bool buttonState, int encoderChange) {
   if (buttonState == false) {
     if (encoderChange == -1) {
       if (mode != 0)
@@ -54,7 +57,7 @@ void _chooseExercise(int &state, int &laststate, bool buttonState, int encoderCh
 	  laststate = state;
   }
 }
-void _chooseWeight(int &state, int &laststate, bool buttonState, int encoderChange) {
+void _chooseWeight(bool buttonState, int encoderChange) {
   static int weight = readInt(WEIGHT_ADDR);				//fetch weight from eeprom
   if (buttonState == false)
   {
@@ -75,12 +78,12 @@ void _chooseWeight(int &state, int &laststate, bool buttonState, int encoderChan
 	  laststate = chooseWeight;
   }
 }
-void _warmup(int &state, int &laststate, unsigned long &time) {
+void _warmup(unsigned long &time) {
   //a timer needds to be started on device powereup. checck for 10 seconds warmup here
-  if ((time / 1000) < 4) {
+  if ((time / 1000) < 3) {
     Serial.print("Waiting: ");
     Serial.print(time / 1000);
-    Serial.println("/4");
+    Serial.println("/3");
     time = millis();
   }
   else {
@@ -98,24 +101,35 @@ void _warmup(int &state, int &laststate, unsigned long &time) {
     }
   }
 }
-void _cooldown(int &state, int &laststate) {
-  Serial.println("cooldown...");
-  for (short int seconds = COOLDOWN; seconds > 0; seconds--) {
-    delay(1000);
-    Serial.println(seconds);
-  }
-  switch (laststate) {
-    case curls:
-      state = curls;
-      //state = benchpress;
-      break;
-    case benchpress:
-      state = squats;
-      break;
-    case squats:
-      state = curls;
-      break;
-  }
+void _cooldown() {
+	static unsigned long start, elapsed;
+	static bool counting = false;
+	if (counting == false) {
+		Serial.println("cooldown...");
+		start = millis();
+		counting = true;
+	}
+	if (counting == true) {
+		Serial.println(elapsed / 1000);
+		elapsed = millis() - start;
+		if ((elapsed / 1000) >= COOLDOWN) {
+			counting = false;
+			switch (laststate) {
+			case curls:
+				state = curls;
+				//state = benchpress;
+				break;
+			case benchpress:
+				state = squats;
+				break;
+			case squats:
+				state = curls;
+				break;
+			}
+		}
+	}
 }
 
+void _settings() {
 
+}
