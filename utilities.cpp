@@ -17,13 +17,15 @@ int encoderPressed() {
 		if (digitalRead(ENCODERPINB) == LOW) {
 			encoder0PinALast = n;
 			//Serial.println("UP");
-			delayMicroseconds(305); //debounce
+			_delay_ms(5);
+			//delayMicroseconds(305); //debounce
 			return 1;
 		}
 		else {
 			encoder0PinALast = n;
 			//Serial.println("down");
-			delayMicroseconds(305); //debounce
+			_delay_ms(5);
+			//delayMicroseconds(305); //debounce
 			return -1;
 		}
 	} 
