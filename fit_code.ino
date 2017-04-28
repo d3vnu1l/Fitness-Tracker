@@ -41,18 +41,23 @@ void setup() {
 
 void loop() {
 	static bool processedData = false;
+	static bool processedState = false;
 	static bool buttonPress = false;
 	static bool encoderChange = false;
 
 	//************************************************************************************************************
 	while (!mpuInterrupt && fifoCount < packetSize) {
-		//IDLE WORK GOES HERE
-		if (buttonPress == true && processedData == true);			//holds button press while system is idling
+		/* IDLE WORK GOES HERE 
+				(this section is continuously looping so long as there is no new dmp sample)
+		*/
+		if (buttonPress == true);			//holds button press while system is idling
 		else buttonPress = buttonPressed();
 		encoderChange = encoderPressed();	//encoder state var
 
 
-		//STATES RECEIVE GO HERE: (update rate = 100 Hz)
+		/* STATES RECEIVE GO HERE
+				(update rate = 100 Hz flagged after dmp sample)
+		*/
 		if (processedData == false) {
 			if (state == mainMenu)                                                                 //start
 			{
@@ -72,16 +77,25 @@ void loop() {
 			else if (state == cooldown) {                                                        //cooldown
 				_cooldown();
 			}
+			processedData = true;
+			buttonPress = false;		//reset button (temporary workaround)
+		}
+		/* OTHER STATES
+				(update rate = 100 Hz flagged after dmp sample) 
+		*/
+		(100 Hz)
+		if (processedState == false) {
 			if (state == curls) {   //curls
 				_curls(buf_YPR, buf_smooth_WORLDACCEL, data_ptr, buttonPress, 200);
 			}
-			else if (state == benchpress) {                           
+			else if (state == benchpress) {
 				_benchpress(buf_smooth_WORLDACCEL, data_ptr, 200);
 			}
-			else if (state == squats) {                                                                 
+			else if (state == squats) {
 				_squats(buf_smooth_WORLDACCEL, data_ptr, 200);
 			}
-			processedData = true;
+			processedState = true;
+			buttonPress = false;		//temporary workaround
 		}
 	}
 	//************************************************************************************************************
@@ -94,12 +108,9 @@ void loop() {
 
 	//3. flag that new data is available//
 	processedData = false;
-
-
+	processedState = false;
 
 }
-//NEED A REFERENCE POINT TO RESET VELOCITY & OR HEIGHT
-//maybe create a stillness detection or use peakdetect
 
 
 
