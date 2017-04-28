@@ -25,6 +25,7 @@ int buf_WORLDACCEL[3][BUFFER_SIZE];
 int buf_smooth_WORLDACCEL[3][BUFFER_SIZE];
 unsigned int data_ptr = 0;
 
+
 // ================================================================
 // ===                         MAIN                             ===
 // ================================================================
@@ -41,9 +42,8 @@ void setup() {
 
 void loop() {
 	static bool processedData = false;
-	static bool processedState = false;
 	static bool buttonPress = false;
-	static bool encoderChange = false;
+	static int encoderChange = 0;
 
 	//************************************************************************************************************
 	while (!mpuInterrupt && fifoCount < packetSize) {
@@ -52,10 +52,9 @@ void loop() {
 		*/
 		if (buttonPress == true);			//holds button press while system is idling
 		else buttonPress = buttonPressed();
-		encoderChange = encoderPressed();	//encoder state var
+		encoderChange+= encoderPressed();	//holds encoder var while idling
 
-
-		/* STATES RECEIVE GO HERE
+		/* STATES GO HERE
 				(update rate = 100 Hz flagged after dmp sample)
 		*/
 		if (processedData == false) {
@@ -77,14 +76,6 @@ void loop() {
 			else if (state == cooldown) {                                                        //cooldown
 				_cooldown();
 			}
-			processedData = true;
-			buttonPress = false;		//reset button (temporary workaround)
-		}
-		/* OTHER STATES
-				(update rate = 100 Hz flagged after dmp sample) 
-		*/
-		(100 Hz)
-		if (processedState == false) {
 			if (state == curls) {   //curls
 				_curls(buf_YPR, buf_smooth_WORLDACCEL, data_ptr, buttonPress, 200);
 			}
@@ -94,8 +85,9 @@ void loop() {
 			else if (state == squats) {
 				_squats(buf_smooth_WORLDACCEL, data_ptr, 200);
 			}
-			processedState = true;
+			processedData = true;
 			buttonPress = false;		//temporary workaround
+			encoderChange = 0;			//temporary workaround
 		}
 	}
 	//************************************************************************************************************
@@ -108,7 +100,6 @@ void loop() {
 
 	//3. flag that new data is available//
 	processedData = false;
-	processedState = false;
 
 }
 

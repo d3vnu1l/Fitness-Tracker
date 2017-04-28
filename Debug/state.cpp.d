@@ -13,4 +13,6 @@ C:\Users\ryan\AppData\Local\Temp\VMBuilds\fit_code\mega_atmega2560\Debug\state.c
  C:\Users\ryan\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino/USBAPI.h \
  C:\Users\ryan\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino/Arduino.h \
  C:\Users\ryan\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\variants\mega/pins_arduino.h \
- C:\Users\ryan\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\libraries\EEPROM\src/EEPROM.h
+ C:\Users\ryan\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\libraries\EEPROM\src/EEPROM.h \
+ C:\Users\ryan\AppData\Local\Temp\VMBuilds\fit_code\mega_atmega2560\Debug\eepromUtilities.h \
+ C:\Users\ryan\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino/arduino.h

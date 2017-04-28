@@ -15,4 +15,6 @@ C:\Users\ryan\AppData\Local\Temp\VMBuilds\fit_code\mega_atmega2560\Debug\fit_cod
  C:\Users\ryan\AppData\Local\Temp\VMBuilds\fit_code\mega_atmega2560\Debug\utilities.h \
  C:\Users\ryan\AppData\Local\Temp\VMBuilds\fit_code\mega_atmega2560\Debug\dmp.h \
  C:\Users\ryan\AppData\Local\Temp\VMBuilds\fit_code\mega_atmega2560\Debug\exercises.h \
- C:\Users\ryan\AppData\Local\Temp\VMBuilds\fit_code\mega_atmega2560\Debug\state.h
+ C:\Users\ryan\AppData\Local\Temp\VMBuilds\fit_code\mega_atmega2560\Debug\state.h \
+ C:\Users\ryan\AppData\Local\Temp\VMBuilds\fit_code\mega_atmega2560\Debug\eepromUtilities.h \
+ C:\Users\ryan\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\libraries\EEPROM\src/EEPROM.h

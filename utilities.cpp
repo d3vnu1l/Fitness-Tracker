@@ -11,15 +11,19 @@
 int encoderPressed() {
 	static int encoder0PinALast = LOW;
 
-	int n = LOW;
+	int n;
 	n = digitalRead(ENCODERPINA);
 	if ((encoder0PinALast == LOW) && (n == HIGH)) {
 		if (digitalRead(ENCODERPINB) == LOW) {
 			encoder0PinALast = n;
+			//Serial.println("UP");
+			delayMicroseconds(305); //debounce
 			return 1;
 		}
 		else {
 			encoder0PinALast = n;
+			//Serial.println("down");
+			delayMicroseconds(305); //debounce
 			return -1;
 		}
 	} 

@@ -5,7 +5,7 @@
 #include "eepromUtilities.h"
 
 extern int state, laststate;
-static int mode = 0;
+int mode = 0;
 
 void _mainMenu() {
 	state = wod;
@@ -17,28 +17,23 @@ void _mainMenu() {
 }
 
 void _wod(bool buttonState, int encoderChange) {
-  if (buttonState == false) {
-    if (encoderChange == -1) {
-      if (mode != 0)
-        mode--;
-    }
-    else if (encoderChange == 1) {
-      if (mode != 2)
-        mode++;
-    }
-    switch (mode)
-    {
-      case 0:
-        Serial.println("Curls\r");
-        break;
-      case 1:
-        Serial.println("Bench Press\r");
-        break;
-      case 2:
-        Serial.println("Squats\r");
-        break;
-    }
-  }
+	int dif = (mode + encoderChange);
+	if (buttonState == false) {
+		if (dif >= 0 && dif <= 2)
+			mode = dif;
+		switch (mode)
+		{
+		case 0:
+			Serial.println("Curls\r");
+			break;
+		case 1:
+			Serial.println("Bench Press\r");
+			break;
+		case 2:
+			Serial.println("Squats\r");
+			break;
+		}
+	}
   else {
 	  //write finalized value
 	  switch (mode)
