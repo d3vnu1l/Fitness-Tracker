@@ -151,12 +151,47 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 		Serial.println("benchpress...");
 	}
 	if (numreps < reps) {
-		vnow = (vlast + (0.01 * (buf_smooth_WORLDACCEL[2][data_ptr] - still_zoffset)));
-		height = height + (0.01 * vlast) + (0.50 * 0.01 * vnow);
+		int amag = abs(buf_smooth_WORLDACCEL[2][data_ptr]);
+
+		vlast = vnow;
+		if (amag >= 200)
+			vnow = vlast;
+		else
+			vnow = vlast + (.01*buf_smooth_WORLDACCEL[2][data_ptr]);
+		vnow = iirHPFV(vnow, 0.005);
+
+		height = height + (0.01 * vlast) + (0.50 * 0.01 * 0.01 * buf_smooth_WORLDACCEL[2][data_ptr]);
 		if (height >= h_max) h_max = height;
 		if (height <= h_min) h_min = height;
 		vlast = vnow;
 		velocity[2][data_ptr] = vnow;
+		still = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 4, 4);
+		dir = directionDetect(velocity, data_ptr, 0, 3);
+		if (h_max > BENCHPRESS_MAX && dir_last == -200 && dir != -200) {	//ERROR RESET 
+			h_max = 0;
+			height = 0;
+			vnow = 0;
+			vlast = 0;
+			numreps++;
+		}
+		dir_last = dir;
+
+		if (still == 1) {
+			//Serial.println("reset");
+			//height = 0;
+			//vlast = 0;
+			//vnow = 0;
+			//dir_last = 0;
+			//dir = 0;
+		}
+
+
+
+
+
+
+		//Serial.print(" dir: ");
+		//Serial.println(dir);
 
 		//Serial.print("reps completed: "); Serial.println(numreps);
 		//Serial.print("height: ");
@@ -169,30 +204,6 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 		//Serial.print(h_max);
 		Serial.print(" reps: ");
 		Serial.println(numreps);
-
-		still = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 4, 4);
-		//if (velocity[2][data_ptr]> 75 || velocity[2][data_ptr] < -75)
-		dir = directionDetect(velocity, data_ptr, 0, 3);
-		//		if (dir_last == -200 && dir != -200 && h_max > BENCHPRESS_MAX) {
-		if (h_max > BENCHPRESS_MAX && dir_last == -200 && dir != -200) {	//ERROR RESET 
-			h_max = 0;
-			height = 0;
-			vnow = 0;
-			vlast = 0;
-			numreps++;
-		}
-		dir_last = dir;
-		//Serial.print(" dir: ");
-		//Serial.println(dir);
-
-		if (still == 1) {
-			//Serial.println("reset");
-			//height = 0;
-			vlast = 0;
-			vnow = 0;
-			dir_last = 0;
-			dir = 0;
-		}
 	}
 	if (numreps == reps) {
 		numreps = -1;

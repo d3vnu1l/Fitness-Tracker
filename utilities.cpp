@@ -84,6 +84,23 @@ void iirLPF(int rough[3][BUFFER_SIZE], int smooth[3][BUFFER_SIZE], unsigned int 
 	smooth[axis][pointer] = alpha * rough[axis][pointer] + alpha_inverse * smooth[axis][last];
 }
 
+//HPF for acceleration
+void iirHPFA(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int pointer, int axis, float alpha) {
+	static float s = 0;
+	unsigned int last;
+	if (pointer == 0)
+		last = (BUFFER_SIZE - 1);
+
+	s = s + (alpha*(rough[axis][pointer] - s));
+	hpf[axis][pointer] = (rough[axis][pointer] - s);
+}
+
+//HPF for velocity
+int iirHPFV(int sample, float alpha) {
+	static float s = 0;
+	s = (s + (sample - s));
+	return (sample - s);
+}
 
 int pivotDetect(float harray[BUFFER_SIZE], int array_ptr, int size) {
 	int signs = 0;

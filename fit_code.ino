@@ -23,6 +23,7 @@ float buf_YPR[3][BUFFER_SIZE];
 int buf_RAWACCEL[3][BUFFER_SIZE];
 int buf_WORLDACCEL[3][BUFFER_SIZE];
 int buf_smooth_WORLDACCEL[3][BUFFER_SIZE];
+int buf_hpf_WORLDACCEL[3][BUFFER_SIZE];
 unsigned int data_ptr = 0;
 
 
@@ -96,7 +97,8 @@ void loop() {
 	dmp_sample(buf_YPR, buf_WORLDACCEL, buf_RAWACCEL, data_ptr);
 
 	//2. filter new sample//
-	iirLPF(buf_WORLDACCEL, buf_smooth_WORLDACCEL, data_ptr, 2, 0.22);  
+	iirHPFA(buf_WORLDACCEL, buf_hpf_WORLDACCEL, data_ptr, 2, 0.009);
+	iirLPF(buf_hpf_WORLDACCEL, buf_smooth_WORLDACCEL, data_ptr, 2, 0.22);  
 
 	//3. flag that new data is available//
 	processedData = false;
