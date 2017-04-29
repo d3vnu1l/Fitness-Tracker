@@ -87,19 +87,19 @@ void iirLPF(int rough[3][BUFFER_SIZE], int smooth[3][BUFFER_SIZE], unsigned int 
 //HPF for acceleration
 void iirHPFA(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int pointer, int axis, float alpha) {
 	static float s = 0;
-	unsigned int last;
-	if (pointer == 0)
-		last = (BUFFER_SIZE - 1);
 
 	s = s + (alpha*(rough[axis][pointer] - s));
 	hpf[axis][pointer] = (rough[axis][pointer] - s);
 }
 
 //HPF for velocity
-int iirHPFV(int sample, float alpha) {
-	static float s = 0;
-	s = (s + (sample - s));
-	return (sample - s);
+float iirHPFV(float sample, float alpha) {
+	static float s2 = 0;
+	//Serial.println(s2); Serial.print(" , ");
+	s2 = s2 + (alpha*(sample - s2));
+	//Serial.print(s2); Serial.print(" , ");
+	//Serial.println(sample - s2);
+	return (sample - s2);
 }
 
 int pivotDetect(float harray[BUFFER_SIZE], int array_ptr, int size) {
@@ -131,7 +131,7 @@ int pivotDetect(float harray[BUFFER_SIZE], int array_ptr, int size) {
 
 //
 int directionDetect(int varray[3][BUFFER_SIZE], unsigned int array_ptr, int still_zoffset, int samples) {
-	int avg = 0;
+	float avg = 0;
 	int last_last;
 	int last = array_ptr;
 	if (last == 0)
@@ -153,7 +153,7 @@ int directionDetect(int varray[3][BUFFER_SIZE], unsigned int array_ptr, int stil
 	avg = avg / samples;
 	if (avg > still_zoffset)
 		return 200;
-	else if (avg < still_zoffset)
+	else if (avg < -still_zoffset)
 		return -200;
 	else if (avg == 0)
 		return -1;

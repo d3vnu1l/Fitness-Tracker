@@ -100,6 +100,14 @@ void loop() {
 	iirHPFA(buf_WORLDACCEL, buf_hpf_WORLDACCEL, data_ptr, 2, 0.009);
 	iirLPF(buf_hpf_WORLDACCEL, buf_smooth_WORLDACCEL, data_ptr, 2, 0.22);  
 
+	/* //DEBUGGING
+	Serial.print(buf_WORLDACCEL[2][data_ptr]);
+	Serial.print(", ");
+	Serial.print(buf_hpf_WORLDACCEL[2][data_ptr]);
+	Serial.print(", ");
+	Serial.println(buf_smooth_WORLDACCEL[2][data_ptr]);
+	*/
+
 	//3. flag that new data is available//
 	processedData = false;
 

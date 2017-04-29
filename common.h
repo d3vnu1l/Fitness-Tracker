@@ -30,7 +30,7 @@
 /*
 	BENCHPRESS PARAMETERS
 */
-#define BENCHPRESS_MAX 300
+#define BENCHPRESS_MAX 200
 
 enum states
 {
