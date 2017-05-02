@@ -74,7 +74,7 @@ void _wod(bool buttonState, int encoderChange) {
 	  //write finalized value
 	  if (nextWorkout == 3)
 		  switchState(laststate);
-	  switchState(chooseWeight);
+	  else switchState(chooseWeight);
   }
 }
 
