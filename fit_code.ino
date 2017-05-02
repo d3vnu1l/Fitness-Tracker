@@ -34,8 +34,8 @@ void setup() {
 	pinMode(ENCODERPINA, INPUT);
 	pinMode(ENCODERPINB, INPUT);
 	pinMode(SLED, OUTPUT);
-	//EEPROM.write(0, 0);	//force reset
-	if (EEPROM.read(INITIALIZED_ADDR) == 0) resetMemory();				//configure memory if first time use
+	//EEPROM.write(0, 0);	//uncomment to force EEPROM reset on boot
+	if (EEPROM.read(INITIALIZED_ADDR) == 0) resetMemory();				//configures memory if first time use
 	initBuffers(buf_YPR, buf_WORLDACCEL, buf_smooth_WORLDACCEL);
 	dmp_init();
 	time = millis();
@@ -97,10 +97,10 @@ void loop() {
 	dmp_sample(buf_YPR, buf_WORLDACCEL, buf_RAWACCEL, data_ptr);
 
 	//2. filter new sample//
-	iirHPFA(buf_WORLDACCEL, buf_hpf_WORLDACCEL, data_ptr, 2, 0.009);
-	iirLPF(buf_hpf_WORLDACCEL, buf_smooth_WORLDACCEL, data_ptr, 2, 0.22);  
+	iirHPFA(buf_WORLDACCEL, buf_hpf_WORLDACCEL, data_ptr, 2, 0.009);			//High pass filter
+	iirLPF(buf_hpf_WORLDACCEL, buf_smooth_WORLDACCEL, data_ptr, 2, 0.22);		//low pass filter
 
-	/* //DEBUGGING
+	/* //DEBUGGING USE
 	Serial.print(buf_WORLDACCEL[2][data_ptr]);
 	Serial.print(", ");
 	Serial.print(buf_hpf_WORLDACCEL[2][data_ptr]);

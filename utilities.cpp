@@ -36,7 +36,7 @@ int encoderPressed() {
 }
 
 //returns button press status
-//true only once for each button press
+//	IMPORTANT: this function returns true only once for each button press
 bool buttonPressed() {
 	static int buttonState = 0;
 	int b = digitalRead(BUTTONPIN);
@@ -50,7 +50,7 @@ bool buttonPressed() {
 	}
 }
 
-//clears buffers to zero. generally only called from the setup() function in main
+//clears buffers to zero. generally only called from the setup() on device startup
 void initBuffers(float buf_YPR[][BUFFER_SIZE], int buf_WORLDACCEL[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE]) {
 	for (int i = 0; i < BUFFER_SIZE; i++) {
 		buf_YPR[0][i] = 0.0;
@@ -66,6 +66,7 @@ void initBuffers(float buf_YPR[][BUFFER_SIZE], int buf_WORLDACCEL[][BUFFER_SIZE]
 		buf_smooth_WORLDACCEL[2][i] = 0;
 	}
 }
+
 
 /* Description: places the filtered result from rough array into smooth array using formula: y(i)= alpha*x(i)+(1-alpha)*y(i-1)
 	  note; this can be done much quicker using fixed point math.
@@ -84,7 +85,7 @@ void iirLPF(int rough[3][BUFFER_SIZE], int smooth[3][BUFFER_SIZE], unsigned int 
 	smooth[axis][pointer] = alpha * rough[axis][pointer] + alpha_inverse * smooth[axis][last];
 }
 
-//HPF for acceleration
+//HPF for acceleration, a higher value of alpha yields a higher cutoff frequency.
 void iirHPFA(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int pointer, int axis, float alpha) {
 	static float s = 0;
 
@@ -93,6 +94,7 @@ void iirHPFA(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int po
 }
 
 //HPF for velocity
+//	CURRENTLY UNUSED
 float iirHPFV(float sample, float alpha) {
 	static float s2 = 0;
 	//Serial.println(s2); Serial.print(" , ");
@@ -102,6 +104,7 @@ float iirHPFV(float sample, float alpha) {
 	return (sample - s2);
 }
 
+/*
 int pivotDetect(float harray[BUFFER_SIZE], int array_ptr, int size) {
 	int signs = 0;
 	int depth = size / 2;
@@ -128,16 +131,21 @@ int pivotDetect(float harray[BUFFER_SIZE], int array_ptr, int size) {
 
 	return signs;
 }
+*/
 
-//
-int directionDetect(int varray[3][BUFFER_SIZE], unsigned int array_ptr, int still_zoffset, int samples) {
+
+//Find direction of data trend. Returns
+//1.	0 if not moving
+//2.	200 if increasing in + dir
+//3.	-200 if decreasing in - dir
+int directionDetect(int varray[3][BUFFER_SIZE], unsigned int array_ptr, int still_zoffset, int sensitivity, int samples) {
 	float avg = 0;
 	int last_last;
 	int last = array_ptr;
 	if (last == 0)
 		int last_last = (BUFFER_SIZE - 1);
 	else int last_last = (last - 1);
-	if (varray[2][last] <= (-SENSITIVITY + still_zoffset) || varray[2][last] >= (SENSITIVITY + still_zoffset)) {
+	if (varray[2][last] <= (-sensitivity + still_zoffset) || varray[2][last] >= (sensitivity + still_zoffset)) {
 		for (int j = 0; j < samples; j++) {
 			if (last - 1 < 0)
 				last = (BUFFER_SIZE - 1);
@@ -160,9 +168,8 @@ int directionDetect(int varray[3][BUFFER_SIZE], unsigned int array_ptr, int stil
 	else return 0;
 }
 
-int detectStill(int garray[3][BUFFER_SIZE], unsigned int array_ptr, int &still_zoffset, int still_size, int tolerance) {
-
-	
+//used to detect how still the device is.
+int detectStill(int garray[3][BUFFER_SIZE], unsigned int array_ptr, int still_zoffset, int still_size, int tolerance) {
 	int last = array_ptr;
 	int match = garray[2][last];
 	int match_h = match + tolerance;

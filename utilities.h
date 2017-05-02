@@ -10,8 +10,8 @@ void iirLPF(int [3][BUFFER_SIZE], int [3][BUFFER_SIZE], unsigned int, int, float
 void iirHPFA(int[3][BUFFER_SIZE], int[3][BUFFER_SIZE], unsigned int, int, float);
 float iirHPFV(float, float);
 int pivotDetect(float [BUFFER_SIZE], int, int);
-int directionDetect(int[][BUFFER_SIZE], unsigned int, int, int);
-int detectStill(int [][BUFFER_SIZE], unsigned int, int &, int, int);
+int directionDetect(int[][BUFFER_SIZE], unsigned int, int, int, int);
+int detectStill(int [][BUFFER_SIZE], unsigned int, int, int, int);
 #endif  /* UTILITIES_H */
 
 
