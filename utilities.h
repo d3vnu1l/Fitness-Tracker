@@ -12,6 +12,7 @@ float iirHPFV(float, float);
 int pivotDetect(float [BUFFER_SIZE], int, int);
 int directionDetect(int[][BUFFER_SIZE], unsigned int, int, int, int);
 int detectStill(int [][BUFFER_SIZE], unsigned int, int, int, int);
+void switchState(int);
 #endif  /* UTILITIES_H */
 
 

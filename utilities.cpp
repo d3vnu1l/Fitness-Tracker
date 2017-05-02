@@ -2,7 +2,7 @@
 # include "common.h"
 #include "Wire.h"
 #include "Arduino.h"
-
+extern int state, laststate;
 
 //Returns one of 3 values;
 // 0  -no movement
@@ -185,4 +185,8 @@ int detectStill(int garray[3][BUFFER_SIZE], unsigned int array_ptr, int still_zo
 	return 1;
 }
 
+void switchState(int newstate) {
+	laststate = state;
+	state = newstate;
+}
 

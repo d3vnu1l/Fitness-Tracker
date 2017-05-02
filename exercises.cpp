@@ -129,8 +129,7 @@ void _curls(float buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZ
 	}
 	else if (numreps != -1 && buttonState == true) {											//assign next state here
 		numreps = -1;
-		state = cooldown;
-		laststate = curls;
+		switchState(cooldown);
 	}
 }
 
@@ -192,7 +191,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 		}
 		if (h_max > BENCHPRESS_MAX && dir_last == -200 && dir != -200) {	//ERROR RESET 
 			Serial.print("Height ");
-			Serial.print(h_max - h_min);
+			Serial.print(h_max);
 			h_max = 0;
 			height = 0;
 			vnow = 0;
@@ -226,8 +225,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 	}
 	if (numreps == reps) {
 		numreps = -1;
-		state = cooldown;
-		laststate = benchpress;
+		switchState(cooldown);
 	}
 }
 void _squats(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, int reps) {
@@ -257,8 +255,7 @@ void _squats(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, in
 	}
 	if (numreps == reps) {
 		numreps = -1;
-		state = cooldown;
-		laststate = squats;
+		switchState(cooldown);
 	}
 }
 void _fitnessTest() {

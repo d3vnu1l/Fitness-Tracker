@@ -5,23 +5,55 @@
 #include "eepromUtilities.h"
 
 extern int state, laststate;
-int mode = 0;
+int nextWorkout = 0;		//holds next workout index, required to set new state after 'warmup'
 
-void _mainMenu() {
-	state = wod;
-	laststate = mainMenu;
-	//wod
-	//settings
-	//stats
-	//fitness test tbd
+void _mainMenu(bool buttonState, int encoderChange) {
+	static int index = 0;					//holds menu index
+	int dif = (index + encoderChange);		//get number of encoder turns
+	if (buttonState == false) {
+		if (dif >= 0 && dif <= 2)			//do not let index variable exceed number of states
+			index = dif;					//map 'mode' variable to states
+
+
+		// /*	//Display
+		switch (index)
+		{
+		case 0:
+			Serial.println("W.O.D.\r");
+			break;
+		case 1:
+			Serial.println("P/R\r");
+			break;
+		case 2:
+			Serial.println("Settings\r");
+			break;
+		}
+		// */
+	}
+	else {
+		switch (index)
+		{
+		case 0:
+			switchState(wod);
+			break;
+		case 1:
+			switchState(personalRecords);
+			break;
+		case 2:
+			switchState(settings);
+			break;
+		}
+	}
 }
 
 void _wod(bool buttonState, int encoderChange) {
-	int dif = (mode + encoderChange);
+	int dif = (nextWorkout + encoderChange);
 	if (buttonState == false) {
-		if (dif >= 0 && dif <= 2)
-			mode = dif;
-		switch (mode)
+		if (dif >= 0 && dif <= 3)
+			nextWorkout = dif;					//map 'mode' variable to states
+
+		// /*	//Display
+		switch (nextWorkout)
 		{
 		case 0:
 			Serial.println("Curls\r");
@@ -32,45 +64,35 @@ void _wod(bool buttonState, int encoderChange) {
 		case 2:
 			Serial.println("Squats\r");
 			break;
+		case 3:
+			Serial.println("Go Back\r");
+			break;
 		}
+		// */
 	}
   else {
 	  //write finalized value
-	  switch (mode)
-	  {
-	  case 0:
-		  Serial.println("Curls");
-		  break;
-	  case 1:
-		  Serial.println("Bench Press");
-		  break;
-	  case 2:
-		  Serial.println("Squats");
-		  break;
-	  }
-	  state = chooseWeight;
-	  laststate = state;
+	  if (nextWorkout == 3)
+		  switchState(laststate);
+	  switchState(chooseWeight);
   }
 }
+
 void _chooseWeight(bool buttonState, int encoderChange) {
   static int weight = readInt(WEIGHT_ADDR);				//fetch weight from eeprom
+  int dif = (weight + encoderChange);		//get number of encoder turns
+
   if (buttonState == false)
   {
-    if (encoderChange == -1) {
-      if (weight > 0)
-        weight -= 1;
-    }
-    else if (encoderChange == 1) {
-      if (weight < 500)
-        weight += 1;
-    }
+	  if (dif >= 0 && dif <= 500) {
+		  weight = dif;
+	  }
     Serial.print("Weight is ");
     Serial.println(weight);
   }
   else {
 	  updateInt(WEIGHT_ADDR, weight);						//update weight in eeprom
-	  state = warmup;
-	  laststate = chooseWeight;
+	  switchState(warmup);
   }
 }
 
@@ -83,15 +105,15 @@ void _warmup(unsigned long &time) {
   }
   else {
     laststate = warmup;
-    switch (mode) {
+    switch (nextWorkout) {
       case 0: //curls
-        state = curls;
+		switchState(curls);
         break;
       case 1: //benchpress
-        state = benchpress;
+        switchState(benchpress);
         break;
       case 2: //squats
-        state = squats;
+		switchState(squats);
         break;
     }
   }
@@ -111,20 +133,59 @@ void _cooldown() {
 			counting = false;
 			switch (laststate) {
 			case curls:
-				state = curls;
-				//state = benchpress;
+				switchState(curls);
 				break;
 			case benchpress:
-				state = squats;
+				switchState(squats);
 				break;
 			case squats:
-				state = curls;
+				switchState(curls);
 				break;
 			}
 		}
 	}
 }
 
-void _settings() {
+void _settings(bool buttonPress, int encoderChange) {
+	static int index = 0;					//holds menu index
+	int dif = (index + encoderChange);		//get number of encoder turns
+	if (buttonPress == false) {
+		if (dif >= 0 && dif <= 2)			//do not let index variable exceed number of states
+			index = dif;					//map 'mode' variable to states
+
+
+											// /*	//Display
+		switch (index)
+		{
+		case 0:
+			Serial.println("Bluetooth\r");
+			break;
+		case 1:
+			Serial.println("Clear Profile");
+			break;
+		case 2:
+			Serial.println("Go Back\r");
+			break;
+		}
+		// */
+	}
+	else {
+		switch (index)
+		{
+		case 0:
+			switchState(laststate);
+			break;
+		case 1:
+			resetMemory();
+			switchState(mainMenu);
+			break;
+		case 2:
+			switchState(laststate);
+			break;
+		}
+	}
+}
+
+void _personalRecords(bool buttonPress, int encoderChange) {
 
 }

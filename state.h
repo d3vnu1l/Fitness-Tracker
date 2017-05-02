@@ -1,12 +1,13 @@
 #ifndef STATE_H_
 #define  STATE_H_
 
-void _mainMenu();
+void _mainMenu(bool, int);
 void _wod(bool, int);
 void _chooseWeight(bool, int);
 void _warmup(unsigned long &);
 void _cooldown();
-void _settings();
+void _settings(bool, int);
+void _personalRecords(bool, int);
 
 
 

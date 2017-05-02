@@ -41,14 +41,14 @@ enum states
 {
 	//menus
 	mainMenu,
-		fitnessTest,	//tbd
+		personalRecords,	//tbd
 		wod,
 		settings,
-		statistics,
 
 	chooseWeight,
-	//exercises
 	warmup,
+
+	//exercises
 	curls,
 	benchpress,
 	squats,

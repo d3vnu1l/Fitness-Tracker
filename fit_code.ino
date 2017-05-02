@@ -61,11 +61,17 @@ void loop() {
 		if (processedData == false) {
 			if (state == mainMenu)                                                                 //start
 			{
-				_mainMenu();
+				_mainMenu(buttonPress, encoderChange);
 			}
 			else if (state == wod)                                                   //chooseexercise
 			{
 				_wod(buttonPress, encoderChange);
+			}
+			else if (state == personalRecords) {
+				_personalRecords(buttonPress, encoderChange);
+			}
+			else if (state == settings) {
+				_settings(buttonPress, encoderChange);
 			}
 			else if (state == chooseWeight)                                                     //chooseweight
 			{
@@ -77,7 +83,7 @@ void loop() {
 			else if (state == cooldown) {                                                        //cooldown
 				_cooldown();
 			}
-			if (state == curls) {   //curls
+			else if (state == curls) {   //curls
 				_curls(buf_YPR, buf_smooth_WORLDACCEL, data_ptr, buttonPress, 200);
 			}
 			else if (state == benchpress) {
