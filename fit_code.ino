@@ -9,13 +9,9 @@
 // ================================================================
 // ===               Global Vars                                ===
 // ================================================================
-//BUTTONS & MISC VARS//
-int buttonState;
-int state = start, laststate;
+//MISC VARS//
+int state = 0, laststate = 0;
 unsigned long time = 0;
-//ENCODER VARS//
-int encoderPos = 0;
-int last_encoderPos = 0;
 
 //MPU VARS//
 extern uint16_t packetSize;
@@ -27,7 +23,9 @@ float buf_YPR[3][BUFFER_SIZE];
 int buf_RAWACCEL[3][BUFFER_SIZE];
 int buf_WORLDACCEL[3][BUFFER_SIZE];
 int buf_smooth_WORLDACCEL[3][BUFFER_SIZE];
+int buf_hpf_WORLDACCEL[3][BUFFER_SIZE];
 unsigned int data_ptr = 0;
+
 
 // ================================================================
 // ===                         MAIN                             ===
@@ -36,8 +34,8 @@ void setup() {
 	pinMode(ENCODERPINA, INPUT);
 	pinMode(ENCODERPINB, INPUT);
 	pinMode(SLED, OUTPUT);
-	//EEPROM.write(0, 0);	//force reset
-	if (EEPROM.read(INITIALIZED_ADDR) == 0) resetMemory();				//configure memory if first time use
+	//EEPROM.write(0, 0);	//uncomment to force EEPROM reset on boot
+	if (EEPROM.read(INITIALIZED_ADDR) == 0) resetMemory();				//configures memory if first time use
 	initBuffers(buf_YPR, buf_WORLDACCEL, buf_smooth_WORLDACCEL);
 	dmp_init();
 	time = millis();
@@ -45,64 +43,75 @@ void setup() {
 
 void loop() {
 	static bool processedData = false;
-	unsigned int last;
+	static bool buttonPress = false;
+	static int encoderChange = 0;
 
+	//************************************************************************************************************
 	while (!mpuInterrupt && fifoCount < packetSize) {
-		readButton(buttonState);
-		readEncoder(encoderPos, last_encoderPos);
+		/* IDLE WORK GOES HERE 
+				(this section is continuously looping so long as there is no new dmp sample)
+		*/
+		if (buttonPress == true);			//holds button press while system is idling
+		else buttonPress = buttonPressed();
+		encoderChange+= encoderPressed();	//holds encoder var while idling
+
+		/* STATES GO HERE
+				(update rate = 100 Hz flagged after dmp sample)
+		*/
 		if (processedData == false) {
-			//EXERCISES GO HERE
+			if (state == mainMenu)                                                                 //start
+			{
+				_mainMenu();
+			}
+			else if (state == wod)                                                   //chooseexercise
+			{
+				_wod(buttonPress, encoderChange);
+			}
+			else if (state == chooseWeight)                                                     //chooseweight
+			{
+				_chooseWeight(buttonPress, encoderChange);
+			}
+			else if (state == warmup) {                                                          //warmup
+				_warmup(time);
+			}
+			else if (state == cooldown) {                                                        //cooldown
+				_cooldown();
+			}
 			if (state == curls) {   //curls
-				_curls(buf_YPR, buf_smooth_WORLDACCEL, data_ptr, state, laststate, buttonState, 200);
+				_curls(buf_YPR, buf_smooth_WORLDACCEL, data_ptr, buttonPress, 200);
 			}
-			else if (state == benchpress) {                           
-				_benchpress(buf_smooth_WORLDACCEL, data_ptr, state, laststate, 40);
+			else if (state == benchpress) {
+				_benchpress(buf_smooth_WORLDACCEL, data_ptr, 200);
 			}
-			else if (state == squats) {                                                                 
-				_squats(buf_smooth_WORLDACCEL, data_ptr, state, laststate, 5);
+			else if (state == squats) {
+				_squats(buf_smooth_WORLDACCEL, data_ptr, 200);
 			}
 			processedData = true;
-		}
-
-		if (state == start)                                                                   //start
-		{
-			_start(state, laststate);
-		}
-		else if (state == chooseExercise)                                                     //chooseexercise
-		{
-			_chooseExercise(state, laststate, buttonState, encoderPos);
-		}
-		else if (state == chooseWeight)                                                           //chooseweight
-		{
-			_chooseWeight(state, laststate, buttonState, encoderPos);
-		}
-		else if (state == warmup) {                                                                 //warmup
-			_warmup(state, laststate, time);
-		}
-		else if (state == cooldown) {                                                                 //cooldown
-			_cooldown(state, laststate);
+			buttonPress = false;		//temporary workaround
+			encoderChange = 0;			//temporary workaround
 		}
 	}
-
+	//************************************************************************************************************
+	
 	//1. handle new data//
 	dmp_sample(buf_YPR, buf_WORLDACCEL, buf_RAWACCEL, data_ptr);
 
 	//2. filter new sample//
-	if (data_ptr == 0)
-		last = (BUFFER_SIZE - 1);
-	else last = (data_ptr - 1);
-	buf_smooth_WORLDACCEL[2][data_ptr] = iirLPF(buf_WORLDACCEL[2][data_ptr], buf_smooth_WORLDACCEL[2][last], 0.22);
-	//buf_smooth_WORLDACCEL[1][data_ptr] = iirLPF(buf_WORLDACCEL[1][data_ptr], 0.21);
-	//buf_smooth_WORLDACCEL[0][data_ptr] = iirLPF(buf_WORLDACCEL[0][data_ptr], 0.21);
+	iirHPFA(buf_WORLDACCEL, buf_hpf_WORLDACCEL, data_ptr, 2, 0.009);			//High pass filter
+	iirLPF(buf_hpf_WORLDACCEL, buf_smooth_WORLDACCEL, data_ptr, 2, 0.22);		//low pass filter
 
-	//3. flag for new data//
+	/* //DEBUGGING USE
+	Serial.print(buf_WORLDACCEL[2][data_ptr]);
+	Serial.print(", ");
+	Serial.print(buf_hpf_WORLDACCEL[2][data_ptr]);
+	Serial.print(", ");
+	Serial.println(buf_smooth_WORLDACCEL[2][data_ptr]);
+	*/
+
+	//3. flag that new data is available//
 	processedData = false;
 
-
-
 }
-//NEED A REFERENCE POINT TO RESET VELOCITY & OR HEIGHT
-//maybe create a stillness detection or use peakdetect
 
 
 

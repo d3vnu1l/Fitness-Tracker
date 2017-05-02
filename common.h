@@ -13,7 +13,6 @@
 #define COOLDOWN 5
 #define BUFFER_SIZE 64
 #define PEAK_SENS 30			//samples to watch for peak
-#define SENSITIVITY 100
 /*
 	Manual Memory Map
 
@@ -36,18 +35,25 @@
 /*
 	BENCHPRESS PARAMETERS
 */
-#define BENCHPRESS_MAX 300
+#define BENCHPRESS_MAX 200
 
 enum states
 {
-	start,
-	chooseExercise,
+	//menus
+	mainMenu,
+		fitnessTest,	//tbd
+		wod,
+		settings,
+		statistics,
+
 	chooseWeight,
+	//exercises
 	warmup,
 	curls,
 	benchpress,
 	squats,
-	cooldown
+
+	cooldown,
 };
 
 #endif  /* UTILITIES_H */

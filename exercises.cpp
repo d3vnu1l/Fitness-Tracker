@@ -3,7 +3,9 @@
 #include "utilities.h"
 #include "EEPROM.h"
 
-void _curls(float buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, int &state, int &laststate, int buttonState, int reps) {
+extern int state, laststate;
+
+void _curls(float buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, bool buttonState, int reps) {
 	static int numreps = -1;							//number of repetitions
 	static float min = 90, max = 0;						//track curl span
 	static bool ready = false;
@@ -18,9 +20,9 @@ void _curls(float buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZ
 
 	if (numreps == -1) {
 
-		if (buttonState == LOW && ready == false)
+		if (buttonState == false && ready == false)
 			Serial.println("Level device and press the button to store calibration...");
-		else if (buttonState == HIGH && ready == false) {
+		else if (buttonState == true && ready == false) {
 			level = angle[data_ptr];
 			ready = true;
 
@@ -47,9 +49,8 @@ void _curls(float buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZ
 			}
 		}
 	}
-	else if (numreps != -1 && buttonState == LOW) {
+	else if (numreps != -1 && numreps < reps && buttonState == false) {
 		int amag = ((buf_smooth_WORLDACCEL[2][data_ptr]));
-
 
 		//Serial.print(amag);
 		//Serial.print(abs(buf_RAWACCEL[0][data_ptr]));
@@ -126,80 +127,110 @@ void _curls(float buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZ
 		if (angle[data_ptr] < min)
 			min = angle[data_ptr];
 	}
-	else if (numreps != -1 && buttonState == HIGH) {											//assign next state here
+	else if (numreps != -1 && buttonState == true) {											//assign next state here
 		numreps = -1;
 		state = cooldown;
 		laststate = curls;
 	}
 }
 
-void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, int &state, int &laststate, int reps) {
+void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, int reps) {
 	static int numreps = -1;
 	static int velocity[3][BUFFER_SIZE];
 	static float vlast = 0;
 	static float vnow = 0;
 	static float height = 0;
 	static float h_max = 0, h_min = 0;
+	static float s = .3, s2 = 0.3;
+	static float s_alpha = .00004;
 	static int still_zoffset = 0;
 	static int dir_last = 0;
-	int still, dir;
+	int deadstill, still, dir;
 
 
 	if (numreps == -1) {
 		numreps = 0;
 		Serial.println("benchpress...");
 	}
-	if (numreps < 5) {
-		vnow = (vlast + (0.01 * (buf_smooth_WORLDACCEL[2][data_ptr] - still_zoffset)));
-		height = height + (0.01 * vlast) + (0.50 * 0.01 * vnow);
-		if (height >= h_max) h_max = height;
-		if (height <= h_min) h_min = height;
-		vlast = vnow;
+	if (numreps < reps) {
+		int amag = abs(buf_smooth_WORLDACCEL[2][data_ptr]);
+		if (amag < 25)
+			vnow = vlast;
+		else
+			vnow = vlast + (.01*buf_smooth_WORLDACCEL[2][data_ptr]);
+
+		//HPF velocity
+		s = ((s_alpha*vnow) + ((1 - s_alpha)*s));
+		vnow = (vnow - s);
+
+
 		velocity[2][data_ptr] = vnow;
+		height = (height + ((0.01 * vlast) + (0.50 * 0.01 * 0.01 * buf_smooth_WORLDACCEL[2][data_ptr])));
+		vlast = vnow;
 
-		//Serial.print("reps completed: "); Serial.println(numreps);
-		//Serial.print("height: ");
-		Serial.print(height);
-		Serial.print(", ");
-		Serial.print(vnow);
-		Serial.print(", ");
-		Serial.print(buf_smooth_WORLDACCEL[2][data_ptr]);
-		//Serial.println();
-		//Serial.print(h_max);
-		Serial.print(" reps: ");
-		Serial.println(numreps);
+		//HPF height
+		//s2 = ((s_alpha*height) + ((1 - s_alpha)*s2));
+		//height = (height - s2);
 
-		still = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 4, 4);
-		//if (velocity[2][data_ptr]> 75 || velocity[2][data_ptr] < -75)
-		dir = directionDetect(velocity, data_ptr, 0, 3);
-		//		if (dir_last == -200 && dir != -200 && h_max > BENCHPRESS_MAX) {
-		if (h_max > BENCHPRESS_MAX && dir_last == -200 && dir != -200) {	//ERROR RESET 
-			//h_max = 0;
-			//height = 0;
-			//vnow = 0;
-			//vlast = 0;
-			numreps++;
-		}
-		dir_last = dir;
-		//Serial.print(" dir: ");
-		//Serial.println(dir);
+		if (abs(height) >= h_max) h_max = abs(height);
+		if (height <= h_min) h_min = height;
+		deadstill = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 9, 4);
+		still = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 3, 10);
+		dir = directionDetect(velocity, data_ptr, 0, 100, 10);
 
 		if (still == 1) {
-			//Serial.println("reset");
+			//Serial.println("dec heihgt");
+			height = height*0.98;
+		}
+		if (deadstill == 1) {
+			//Serial.print("reset still");
 			height = 0;
 			vlast = 0;
 			vnow = 0;
 			dir_last = 0;
 			dir = 0;
 		}
+		if (h_max > BENCHPRESS_MAX && dir_last == -200 && dir != -200) {	//ERROR RESET 
+			Serial.print("Height ");
+			Serial.print(h_max - h_min);
+			h_max = 0;
+			height = 0;
+			vnow = 0;
+			vlast = 0;
+			numreps++;
+			Serial.print("	reps: ");
+			Serial.println(numreps);
+		}
+		dir_last = dir;
+
+
+
+
+
+
+		/*	//for debugging
+		Serial.print(" dir: ");
+		Serial.print(dir);
+		Serial.print(" , ");
+		//Serial.print("reps completed: "); Serial.println(numreps);
+		Serial.print(height);
+		Serial.print(", ");
+		Serial.print(vnow);
+		Serial.print(", ");
+		Serial.print(buf_smooth_WORLDACCEL[2][data_ptr]);
+		//Serial.print(", ");
+		//Serial.println(h_max);
+		Serial.print(" reps: ");
+		Serial.println(numreps);
+		*/
 	}
-	if (numreps == 5) {
+	if (numreps == reps) {
 		numreps = -1;
 		state = cooldown;
 		laststate = benchpress;
 	}
 }
-void _squats(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, int &state, int &laststate, int reps) {
+void _squats(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, int reps) {
 	static int numreps = -1;
 	static int velocity[3][BUFFER_SIZE];
 	static float vlast = 0;
@@ -212,7 +243,7 @@ void _squats(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, in
 		numreps = 0;
 		Serial.println("squats...");
 	}
-	if (numreps < 5) {
+	if (numreps < reps) {
 		//still = detectStill(velocity, 15);
 		if (still == 1) {
 			height = 0;
@@ -224,11 +255,13 @@ void _squats(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, in
 		vlast = vnow;
 		velocity[2][data_ptr] = vnow;
 	}
-	if (numreps == 5) {
+	if (numreps == reps) {
 		numreps = -1;
 		state = cooldown;
 		laststate = squats;
 	}
 }
-
+void _fitnessTest() {
+	//needs implementation
+}
 

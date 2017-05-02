@@ -4,43 +4,36 @@
 #include "EEPROM.h"
 #include "eepromUtilities.h"
 
-int mode = 0;						//used in mapping encoder to exercise selection
+extern int state, laststate;
+int mode = 0;
 
-void _start(int &state, int &laststate) {
-  Serial.println("Rotate upper dial to enter an exercise");
-  state = chooseExercise;
-  laststate = start;
+void _mainMenu() {
+	state = wod;
+	laststate = mainMenu;
+	//wod
+	//settings
+	//stats
+	//fitness test tbd
 }
 
-void _chooseExercise(int &state, int &laststate, int buttonState, int encoderPos) {
-  static int last_encoderPos = 0;				//encoder tracking
-  static bool triggered = false;				//debounce button
-  if (buttonState == LOW && triggered == false) {
-    if (last_encoderPos > encoderPos) {
-      if (mode != 0)
-        mode--;
-    }
-    else if (last_encoderPos < encoderPos) {
-      if (mode != 2)
-        mode++;
-    }
-    switch (mode)
-    {
-      case 0:
-        Serial.println("Curls\r");
-        break;
-      case 1:
-        Serial.println("Bench Press\r");
-        break;
-      case 2:
-        Serial.println("Squats\r");
-        break;
-    }
-    last_encoderPos = encoderPos;
-  }
-  else if (buttonState==HIGH){
-	  triggered = true;
-  }
+void _wod(bool buttonState, int encoderChange) {
+	int dif = (mode + encoderChange);
+	if (buttonState == false) {
+		if (dif >= 0 && dif <= 2)
+			mode = dif;
+		switch (mode)
+		{
+		case 0:
+			Serial.println("Curls\r");
+			break;
+		case 1:
+			Serial.println("Bench Press\r");
+			break;
+		case 2:
+			Serial.println("Squats\r");
+			break;
+		}
+	}
   else {
 	  //write finalized value
 	  switch (mode)
@@ -59,26 +52,20 @@ void _chooseExercise(int &state, int &laststate, int buttonState, int encoderPos
 	  laststate = state;
   }
 }
-void _chooseWeight(int &state, int &laststate, int buttonState, int encoderPos) {
+void _chooseWeight(bool buttonState, int encoderChange) {
   static int weight = readInt(WEIGHT_ADDR);				//fetch weight from eeprom
-  static int last_encoderPos = 0;
-  static bool triggered = false;
-  if (buttonState == LOW && triggered==false)
+  if (buttonState == false)
   {
-    if (last_encoderPos > encoderPos) {
+    if (encoderChange == -1) {
       if (weight > 0)
         weight -= 1;
     }
-    else if (last_encoderPos < encoderPos) {
+    else if (encoderChange == 1) {
       if (weight < 500)
         weight += 1;
     }
     Serial.print("Weight is ");
     Serial.println(weight);
-    last_encoderPos = encoderPos;
-  }
-  else if (buttonState==HIGH){
-	  triggered = true;
   }
   else {
 	  updateInt(WEIGHT_ADDR, weight);						//update weight in eeprom
@@ -86,12 +73,12 @@ void _chooseWeight(int &state, int &laststate, int buttonState, int encoderPos) 
 	  laststate = chooseWeight;
   }
 }
-void _warmup(int &state, int &laststate, unsigned long &time) {
-  //a timer needds to be started on device powereup. checck for 10 seconds warmup here
-  if ((time / 1000) < 4) {
+
+void _warmup(unsigned long &time) {
+  if ((time / 1000) < 3) {
     Serial.print("Waiting: ");
     Serial.print(time / 1000);
-    Serial.println("/4");
+    Serial.println("/3");
     time = millis();
   }
   else {
@@ -109,24 +96,35 @@ void _warmup(int &state, int &laststate, unsigned long &time) {
     }
   }
 }
-void _cooldown(int &state, int &laststate) {
-  Serial.println("cooldown...");
-  for (short int seconds = COOLDOWN; seconds > 0; seconds--) {
-    delay(1000);
-    Serial.println(seconds);
-  }
-  switch (laststate) {
-    case curls:
-      state = curls;
-      //state = benchpress;
-      break;
-    case benchpress:
-      state = squats;
-      break;
-    case squats:
-      state = curls;
-      break;
-  }
+void _cooldown() {
+	static unsigned long start, elapsed;
+	static bool counting = false;
+	if (counting == false) {
+		Serial.println("cooldown...");
+		start = millis();
+		counting = true;
+	}
+	if (counting == true) {
+		Serial.println(elapsed / 1000);
+		elapsed = millis() - start;
+		if ((elapsed / 1000) >= COOLDOWN) {
+			counting = false;
+			switch (laststate) {
+			case curls:
+				state = curls;
+				//state = benchpress;
+				break;
+			case benchpress:
+				state = squats;
+				break;
+			case squats:
+				state = curls;
+				break;
+			}
+		}
+	}
 }
 
+void _settings() {
 
+}
