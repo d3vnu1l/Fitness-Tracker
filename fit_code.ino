@@ -34,7 +34,6 @@ void setup() {
 	pinMode(ENCODERPINA, INPUT);
 	pinMode(ENCODERPINB, INPUT);
 	pinMode(SLED, OUTPUT);
-	//EEPROM.write(0, 0);	//uncomment to force EEPROM reset on boot
 	if (EEPROM.read(INITIALIZED_ADDR) == 0) resetMemory();				//configures memory if first time use
 	initBuffers(buf_YPR, buf_WORLDACCEL, buf_smooth_WORLDACCEL);
 	dmp_init();
