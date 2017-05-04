@@ -214,7 +214,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 		}
 
 		//count a repetition when specifications are met
-		if (h_max > BENCHPRESS_MAX && dir_last == -200 && dir != -200) {	//ERROR RESET 
+		if (h_max > BENCHPRESS_MAX && dir_last == 200 && dir != 200) {	//ERROR RESET 
 			Serial.print("Height ");
 			Serial.print(h_max);
 			h_max = 0;

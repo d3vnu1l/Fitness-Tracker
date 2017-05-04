@@ -42,6 +42,7 @@ bool buttonPressed() {
 	int b = digitalRead(BUTTONPIN);
 	if (b==1 && buttonState != b) {
 		buttonState = b;
+		_delay_ms(5);
 		return true;
 	}
 	else {
