@@ -48,7 +48,7 @@
 */
 #define CURLS_UP_THRESH 60		//max angle that must be surpassed
 #define CURLS_DOWN_THRESH 35	//minumum angle after which a curl is registered
-#define ACC_MAG -345			//acceleration detection sensitivity
+#define ACC_MAG -318			//acceleration detection sensitivity
 #define ACC_MSEC 47				//number of msecs that acceleration must be present
 /*
 	BENCHPRESS PARAMETERS

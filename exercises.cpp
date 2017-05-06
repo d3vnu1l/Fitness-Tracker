@@ -149,7 +149,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 	static int dir_last = 0;
 	int deadstill, still, dir;
 	//stat-track vars
-	static long int acceleration_accum_up = 0;	//*
+	static long int acceleration_accum_up = 0;		//*
 	static long int acceleration_accum_down = 0;	//*
 	static long unsigned timer = 0;
 	if (timer == 0) {
@@ -211,6 +211,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 			vnow = 0;
 			dir_last = 0;
 			dir = 0;
+			timer = 0;
 		}
 
 		//count a repetition when specifications are met
