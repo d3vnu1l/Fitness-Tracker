@@ -40,7 +40,7 @@ void dmp_init(void) {
 #elif I2CDEV_IMPLEMENTATION == I2CDEV_BUILTIN_FASTWIRE
 	Fastwire::setup(400, true);
 #endif
-	Serial.begin(128000);
+	Serial.begin(115200);
 	while (!Serial);
 	// verify connection
 	Serial.println(F("Testing device connections..."));
