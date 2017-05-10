@@ -153,7 +153,7 @@ void _warmup(unsigned long &time) {
 			switchState(benchpress);
 			break;
 		case 2: //squats
-			switchState(squats);
+			switchState(benchpress);
 			break;
 		}
 	}
