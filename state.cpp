@@ -137,10 +137,10 @@ void _chooseWeight(bool buttonState, int encoderChange) {
 }
 
 void _warmup(unsigned long &time) {
-	if ((time / 1000) < 3) {
+	if ((time / 1000) < 10) {
 		Serial.print("Waiting: ");
 		Serial.print(time / 1000);
-		Serial.println("/3");
+		Serial.println("/10");
 		time = millis();
 	}
 	else {
@@ -167,7 +167,7 @@ void _cooldown() {
 		counting = true;
 	}
 	if (counting == true) {
-		Serial.println(elapsed / 1000);
+		if (elapsed%1000==0) Serial.println(elapsed / 1000);
 		elapsed = millis() - start;
 		if ((elapsed / 1000) >= COOLDOWN) {
 			counting = false;
