@@ -244,7 +244,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 			vnow = 0;
 			dir_last = 0;
 			dir = 0;
-			timer = 0;
+			timer = millis();
 		}
 
 
