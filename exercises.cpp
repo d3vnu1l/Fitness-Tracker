@@ -137,6 +137,8 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 	static int numreps = -1;	//*				//number of reps, set to -1 before exercise is started
 	//height tracking vars
 	static int velocity[3][BUFFER_SIZE];
+	static int velocity_hpf[3][BUFFER_SIZE];
+
 	static int vlast = 0;	//*
 	static int vnow = 0;	//*
 	static float height = 0;	//*
@@ -169,25 +171,44 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 		else
 			vnow = vlast + (.01*buf_smooth_WORLDACCEL[2][data_ptr]);
 	
+		velocity[2][data_ptr] = vnow;
 
-		//HPF velocity
-		s = s + (s_alpha*(vnow - s));
-		vnow = (vnow - s);
+		iirHPFV(velocity, velocity_hpf, data_ptr, 2);
 
 		//calculate new height
-		height = height + ((0.01 * vlast) + (0.50 * 0.01 * vnow));
+		height = height +  (0.01 * velocity_hpf[2][data_ptr]);
 
-		if (h_max > BENCHPRESS_MAX && vlast == 200 && vnow != 200) {	//ERROR RESET 
+
+		if (h_max > BENCHPRESS_MAX && vlast > 0 && vnow < 0) {	//ERROR RESET 
+			Serial.print("Height ");
+			Serial.print(h_max);
+
+			unsigned int time_passed = millis() - timer;
+			timer = millis();
+			float effort = (abs(acceleration_accum_up) / (1.0*time_passed));
 			height = 0;
+			h_max = 0;
 			//vnow = 0;
 			//vlast = 0;
-			numreps++;
+			if (effort > .9) {
+				numreps++;
+
+				Serial.print("	reps: ");
+				Serial.print(numreps);
+				Serial.print(", ACCUM up : ");
+				Serial.print(acceleration_accum_up);
+				Serial.print(", ACCUM dwn : ");
+				Serial.print(acceleration_accum_down);
+				Serial.print(", time passed: ");
+				Serial.print(time_passed);
+				//Serial.print(", Effort: ");
+				//Serial.println(effort);
+				Serial.print(", symmetry: ");
+				Serial.println(1.0*acceleration_accum_down/acceleration_accum_up);
+			}
+			acceleration_accum_down = 0;
+			acceleration_accum_up = 0;
 		}
-
-
-
-
-
 
 		vlast = vnow;
 		velocity[2][data_ptr] = vnow;
@@ -198,7 +219,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 
 		//get information about type of movement using stored accelo data
 		deadstill = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 9, 4);
-		//still = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 3, 10);
+		still = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 3, 10);
 		dir = directionDetect(velocity, data_ptr, 0, 100, 10);
 
 		if (dir == 200) {
@@ -213,7 +234,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 		//slowly reduce estimated height when device is not in motion
 		if (still == 1) {
 			//Serial.println("dec heihgt");
-			//height = height*0.98;
+			height = height*0.999;
 		}
 
 		//reset height tracking when device is on the ground
@@ -227,35 +248,11 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 			timer = 0;
 		}
 
-		//count a repetition when specifications are met
-		if (h_max > BENCHPRESS_MAX && dir_last == 200 && dir != 200) {	//ERROR RESET 
-			//Serial.print("Height ");
-			//Serial.print(h_max);
-			h_max = 0;
-			height = 0;
-			//vnow = 0;
-			//vlast = 0;
-			numreps++;
-			unsigned int time_passed = millis() - timer;
-			timer = millis();
-			float effort = (abs(acceleration_accum_up) / (1.0*time_passed));
-			/*
-			Serial.print("	reps: ");
-			Serial.print(numreps);
-			Serial.print(", ACCELERATION ACCUM: ");
-			Serial.print(acceleration_accum_up);
-			Serial.print(", time passed: ");
-			Serial.print(time_passed);
-			Serial.print(", Effort: ");
-			Serial.println(effort);
-			*/
 
-			acceleration_accum_up = 0;
-		}
 		dir_last = dir;
 
 
-			//for debugging
+		/*	//for debugging
 		//Serial.print(" dir: ");
 		Serial.print(dir);
 		Serial.print(" , ");

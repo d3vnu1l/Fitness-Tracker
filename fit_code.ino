@@ -83,13 +83,13 @@ void loop() {
 				_cooldown();
 			}
 			else if (state == curls) {   //curls
-				_curls(buf_YPR, buf_smooth_WORLDACCEL, data_ptr, buttonPress, 200);
+				_curls(buf_YPR, buf_smooth_WORLDACCEL, data_ptr, buttonPress, 5);
 			}
 			else if (state == benchpress) {
-				_benchpress(buf_smooth_WORLDACCEL, data_ptr, 200);
+				_benchpress(buf_smooth_WORLDACCEL, data_ptr, 5);
 			}
 			else if (state == squats) {
-				_squats(buf_smooth_WORLDACCEL, data_ptr, 200);
+				_squats(buf_smooth_WORLDACCEL, data_ptr, 5);
 			}
 			processedData = true;
 			buttonPress = false;		//temporary workaround
@@ -102,8 +102,8 @@ void loop() {
 	dmp_sample(buf_YPR, buf_WORLDACCEL, buf_RAWACCEL, data_ptr);
 
 	//2. filter new sample//
-	iirHPFA(buf_WORLDACCEL, buf_hpf_WORLDACCEL, data_ptr, 2, 0.009);			//High pass filter
-	iirLPF(buf_hpf_WORLDACCEL, buf_smooth_WORLDACCEL, data_ptr, 2, 0.22);		//low pass filter
+	iirHPFA(buf_WORLDACCEL, buf_hpf_WORLDACCEL, data_ptr, 2);			//High pass filter
+	iirLPF(buf_hpf_WORLDACCEL, buf_smooth_WORLDACCEL, data_ptr, 2);		//low pass filter
 
 	/* //DEBUGGING USE
 	Serial.print(buf_WORLDACCEL[2][data_ptr]);

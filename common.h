@@ -32,6 +32,7 @@
 #define CAT_ADDR (CURLS_BASEMEM)	//curls average time
 #define CAA_ADDR (CURLS_BASEMEM+2)	//curls average acceleration
 #define CAS_ADDR (CURLS_BASEMEM+4)	//curls average intensity
+
 //BENCHPRESS STATS
 #define BENCHPRESS_BASEMEM 64	//base memory address for curl data
 #define BAT_ADDR (BENCHPRESS_BASEMEM)	//curls average time
@@ -53,7 +54,7 @@
 /*
 	BENCHPRESS PARAMETERS
 */
-#define BENCHPRESS_MAX 200
+#define BENCHPRESS_MAX 100
 
 #define MAX_ALLOWABLE_WEIGHT 500
 

@@ -69,40 +69,41 @@ void initBuffers(float buf_YPR[][BUFFER_SIZE], int buf_WORLDACCEL[][BUFFER_SIZE]
 }
 
 
-/* Description: places the filtered result from rough array into smooth array using formula: y(i)= alpha*x(i)+(1-alpha)*y(i-1)
-	  note; this can be done much quicker using fixed point math.
-	  also, because this is an IIR filter, it takes a few samples to stabilize.
-   Usage: change alpha to change frequency cutoff.
-	  fs=sample rate (100hz), fp=1/fs, RC=fp*((1-alpha)/alpha)
-	  cutoff frequency = (1/(2*pi*RC))
-*/
-void iirLPF(int rough[3][BUFFER_SIZE], int smooth[3][BUFFER_SIZE], unsigned int pointer, int axis, float alpha) {
-	unsigned int last;
-	if (pointer == 0)
-		last = (BUFFER_SIZE - 1);
-	else last = (pointer - 1);
-	static float alpha_inverse;
-	alpha_inverse = 1 - alpha;
-	smooth[axis][pointer] = alpha * rough[axis][pointer] + alpha_inverse * smooth[axis][last];
+//lpf for acceleration;			(see: http://www-users.cs.york.ac.uk/~fisher/mkfilter/trad.html)
+void iirLPF(int rough[3][BUFFER_SIZE], int smooth[3][BUFFER_SIZE], unsigned int pointer, int axis) {
+	static float xa[2], ya[2];
+	static float gain = 16.89454484;
+
+	xa[0] = xa[1];
+	xa[1] = rough[axis][pointer] / gain;
+	ya[0] = ya[1];
+	ya[1] = (xa[1] + xa[0]) + (0.8816185924 * ya[0]);
+	smooth[axis][pointer] = ya[1];
 }
 
 //HPF for acceleration, a higher value of alpha yields a higher cutoff frequency.
-void iirHPFA(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int pointer, int axis, float alpha) {
-	static float s = 0;
+void iirHPFA(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int pointer, int axis) {
+	static float xa[2], ya[2];
+	static float gain = 1.003141603;
 
-	s = s + (alpha*(rough[axis][pointer] - s));
-	hpf[axis][pointer] = (rough[axis][pointer] - s);
+	xa[0] = xa[1];
+	xa[1] = rough[axis][pointer] / gain;
+	ya[0] = ya[1];
+	ya[1] = (xa[1] - xa[0]) + (0.9937364715 * ya[0]);
+	hpf[axis][pointer] = ya[1];
+
 }
 
 //HPF for velocity
-//	CURRENTLY UNUSED
-float iirHPFV(float sample, float alpha) {
-	static float s2 = 0;
-	//Serial.println(s2); Serial.print(" , ");
-	s2 = s2 + (alpha*(sample - s2));
-	//Serial.print(s2); Serial.print(" , ");
-	//Serial.println(sample - s2);
-	return (sample - s2);
+float iirHPFV(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int pointer, int axis) {
+	static float xv[2], yv[2];
+	static float gain = 1.004712424;
+
+	xv[0] = xv[1];
+	xv[1] = rough[axis][pointer] / gain;
+	yv[0] = yv[1];
+	yv[1] = (xv[1] - xv[0]) + (0.9906193578 * yv[0]);
+	hpf[axis][pointer] = yv[1];
 }
 
 /*
