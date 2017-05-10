@@ -72,12 +72,12 @@ void initBuffers(float buf_YPR[][BUFFER_SIZE], int buf_WORLDACCEL[][BUFFER_SIZE]
 //lpf for acceleration;			(see: http://www-users.cs.york.ac.uk/~fisher/mkfilter/trad.html)
 void iirLPF(int rough[3][BUFFER_SIZE], int smooth[3][BUFFER_SIZE], unsigned int pointer, int axis) {
 	static float xa[2], ya[2];
-	static float gain = 16.89454484;
+	static float gain = 8.915815088;
 
 	xa[0] = xa[1];
 	xa[1] = rough[axis][pointer] / gain;
 	ya[0] = ya[1];
-	ya[1] = (xa[1] + xa[0]) + (0.8816185924 * ya[0]);
+	ya[1] = (xa[1] + xa[0]) + (0.7756795110 * ya[0]);
 	smooth[axis][pointer] = ya[1];
 }
 
