@@ -11,7 +11,7 @@
 
 #define DELAY_VALUE 200
 #define COOLDOWN 5
-#define BUFFER_SIZE 64
+#define BUFFER_SIZE 32
 #define PEAK_SENS 30			//samples to watch for peak
 /*
 	Manual Memory Map
@@ -57,6 +57,9 @@
 #define BENCHPRESS_MAX 100
 
 #define MAX_ALLOWABLE_WEIGHT 500
+
+#define BTNDELAYMS 35
+#define ENCDELAYMS 6
 
 enum states
 {

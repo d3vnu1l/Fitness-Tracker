@@ -58,6 +58,7 @@ void loop() {
 		/* STATES GO HERE
 				(update rate = 100 Hz flagged after dmp sample)
 		*/
+
 		if (processedData == false) {
 			if (state == mainMenu)                                                                 //start
 			{
@@ -98,7 +99,7 @@ void loop() {
 		}
 	}
 	//************************************************************************************************************
-	
+	//Serial.println(micros());
 	//1. handle new data//
 	dmp_sample(buf_YPR, buf_WORLDACCEL, buf_RAWACCEL, data_ptr);
 
@@ -107,12 +108,12 @@ void loop() {
 	iirLPF(buf_hpf_WORLDACCEL, buf_smooth_WORLDACCEL, data_ptr, 2);		//low pass filter
 
 	 //DEBUGGING USE
-	Serial.print(buf_WORLDACCEL[2][data_ptr]);
+	//Serial.print(buf_WORLDACCEL[2][data_ptr]);
 	//Serial.print(", ");
 	//Serial.print(buf_hpf_WORLDACCEL[2][data_ptr]);
-	Serial.print(", ");
-	Serial.println(buf_smooth_WORLDACCEL[2][data_ptr]);
-	
+	//Serial.print(", ");
+	//Serial.println(buf_smooth_WORLDACCEL[2][data_ptr]);
+	//Serial.println(micros());
 
 	//3. flag that new data is available//
 	processedData = false;

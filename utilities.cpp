@@ -9,45 +9,51 @@ extern int state, laststate;
 // 1  -clockwise
 //-1  -counterclockwise
 int encoderPressed() {
+	static int lastpress = millis();
 	static int encoder0PinALast = LOW;
 
-	int n;
-	n = digitalRead(ENCODERPINA);
-	if ((encoder0PinALast == LOW) && (n == HIGH)) {
-		if (digitalRead(ENCODERPINB) == LOW) {
-			encoder0PinALast = n;
-			//Serial.println("UP");
-			_delay_ms(5);
-			//delayMicroseconds(305); //debounce
-			return 1;
+	if ((millis() - lastpress) < ENCDELAYMS)
+		return 0;
+	else {
+		int n = digitalRead(ENCODERPINA);
+		if ((encoder0PinALast == LOW) && (n == HIGH)) {
+			if (digitalRead(ENCODERPINB) == LOW) {
+				encoder0PinALast = n;
+				lastpress = millis();
+				return 1;
+			}
+			else {
+				encoder0PinALast = n;
+				lastpress = millis();
+				return -1;
+			}
 		}
 		else {
 			encoder0PinALast = n;
-			//Serial.println("down");
-			_delay_ms(5);
-			//delayMicroseconds(305); //debounce
-			return -1;
+			return 0;
 		}
-	} 
-	else {
-		encoder0PinALast = n;
-		return 0;
 	}
 }
 
 //returns button press status
 //	IMPORTANT: this function returns true only once for each button press
 bool buttonPressed() {
+	static int lastpress = millis();
 	static int buttonState = 0;
-	int b = digitalRead(BUTTONPIN);
-	if (b==1 && buttonState != b) {
-		buttonState = b;
-		_delay_ms(5);
-		return true;
-	}
-	else {
-		buttonState = b;
+
+	if ((millis() - lastpress) < BTNDELAYMS) 
 		return false;
+	else {
+		int b = digitalRead(BUTTONPIN);
+		if (b == 1 && buttonState != b) {
+			lastpress = millis();
+			buttonState = b;
+			return true;
+		}
+		else {
+			buttonState = b;
+			return false;
+		}
 	}
 }
 
