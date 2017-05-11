@@ -5,6 +5,7 @@
 #include "state.h"
 #include "eepromUtilities.h"
 #include "EEPROM.h"
+#include "Encoder.h"
 
 // ================================================================
 // ===               Global Vars                                ===
@@ -26,13 +27,16 @@ int buf_smooth_WORLDACCEL[3][BUFFER_SIZE];
 int buf_hpf_WORLDACCEL[3][BUFFER_SIZE];
 unsigned int data_ptr = 0;
 
+Encoder encoder(ENCODERPINA, ENCODERPINB);
+
 
 // ================================================================
 // ===                         MAIN                             ===
 // ================================================================
 void setup() {
-	pinMode(ENCODERPINA, INPUT);
-	pinMode(ENCODERPINB, INPUT);
+	//pinMode(ENCODERPINA, INPUT);
+	//pinMode(ENCODERPINB, INPUT);
+	attachInterrupt(0, doEncoder, CHANGE);
 	pinMode(SLED, OUTPUT);
 	if (EEPROM.read(INITIALIZED_ADDR) == 0) resetMemory();				//configures memory if first time use
 	initBuffers(buf_YPR, buf_WORLDACCEL, buf_smooth_WORLDACCEL);
@@ -46,6 +50,7 @@ void loop() {
 	static int encoderChange = 0;
 
 
+
 	//************************************************************************************************************
 	while (!mpuInterrupt && fifoCount < packetSize) {
 		/* IDLE WORK GOES HERE 
@@ -53,12 +58,13 @@ void loop() {
 		*/
 		if (buttonPress == true);			//holds button press while system is idling
 		else buttonPress = buttonPressed();
-		encoderChange+= encoderPressed();	//holds encoder var while idling
+
 
 		/* STATES GO HERE
 				(update rate = 100 Hz flagged after dmp sample)
 		*/
 		if (processedData == false) {
+			int dif = encoderChange - encoder.getPosition();
 			if (state == mainMenu)                                                                 //start
 			{
 				_mainMenu(buttonPress, encoderChange);
@@ -92,9 +98,9 @@ void loop() {
 			else if (state == squats) {
 				_squats(buf_smooth_WORLDACCEL, data_ptr, 5);
 			}
+			encoderChange = encoder.getPosition();
 			processedData = true;
 			buttonPress = false;		//temporary workaround
-			encoderChange = 0;			//temporary workaround
 		}
 	}
 	//************************************************************************************************************
@@ -107,16 +113,23 @@ void loop() {
 	iirLPF(buf_hpf_WORLDACCEL, buf_smooth_WORLDACCEL, data_ptr, 2);		//low pass filter
 
 	 //DEBUGGING USE
-	Serial.print(buf_WORLDACCEL[2][data_ptr]);
+	//Serial.print(buf_WORLDACCEL[2][data_ptr]);
 	//Serial.print(", ");
 	//Serial.print(buf_hpf_WORLDACCEL[2][data_ptr]);
-	Serial.print(", ");
-	Serial.println(buf_smooth_WORLDACCEL[2][data_ptr]);
+	//Serial.print(", ");
+	//Serial.println(buf_smooth_WORLDACCEL[2][data_ptr]);
 	
 
 	//3. flag that new data is available//
 	processedData = false;
 
+}
+
+
+void doEncoder() {
+	Serial.println("TEst");
+	encoder.update();
+	Serial.println(encoder.getPosition());
 }
 
 

@@ -4,36 +4,6 @@
 #include "Arduino.h"
 extern int state, laststate;
 
-//Returns one of 3 values;
-// 0  -no movement
-// 1  -clockwise
-//-1  -counterclockwise
-int encoderPressed() {
-	static int encoder0PinALast = LOW;
-
-	int n;
-	n = digitalRead(ENCODERPINA);
-	if ((encoder0PinALast == LOW) && (n == HIGH)) {
-		if (digitalRead(ENCODERPINB) == LOW) {
-			encoder0PinALast = n;
-			//Serial.println("UP");
-			_delay_ms(5);
-			//delayMicroseconds(305); //debounce
-			return 1;
-		}
-		else {
-			encoder0PinALast = n;
-			//Serial.println("down");
-			_delay_ms(5);
-			//delayMicroseconds(305); //debounce
-			return -1;
-		}
-	} 
-	else {
-		encoder0PinALast = n;
-		return 0;
-	}
-}
 
 //returns button press status
 //	IMPORTANT: this function returns true only once for each button press
