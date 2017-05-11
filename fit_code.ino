@@ -86,7 +86,7 @@ void loop() {
 				_curls(buf_YPR, buf_smooth_WORLDACCEL, data_ptr, buttonPress, 5);
 			}
 			else if (state == benchpress) {
-				_benchpress(buf_smooth_WORLDACCEL, data_ptr, 5);
+				_benchpress(buf_smooth_WORLDACCEL, data_ptr, 10);
 			}
 			else if (state == squats) {
 				_squats(buf_smooth_WORLDACCEL, data_ptr, 5);
@@ -105,13 +105,13 @@ void loop() {
 	iirHPFA(buf_WORLDACCEL, buf_hpf_WORLDACCEL, data_ptr, 2);			//High pass filter
 	iirLPF(buf_hpf_WORLDACCEL, buf_smooth_WORLDACCEL, data_ptr, 2);		//low pass filter
 
-	/* //DEBUGGING USE
+	 //DEBUGGING USE
 	Serial.print(buf_WORLDACCEL[2][data_ptr]);
-	Serial.print(", ");
-	Serial.print(buf_hpf_WORLDACCEL[2][data_ptr]);
+	//Serial.print(", ");
+	//Serial.print(buf_hpf_WORLDACCEL[2][data_ptr]);
 	Serial.print(", ");
 	Serial.println(buf_smooth_WORLDACCEL[2][data_ptr]);
-	*/
+	
 
 	//3. flag that new data is available//
 	processedData = false;

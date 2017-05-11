@@ -184,8 +184,8 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 
 
 		if (h_max > BENCHPRESS_MAX && vlast > 0 && vnow < 0) {	//ERROR RESET 
-			Serial.print("Height ");
-			Serial.print(h_max);
+			//Serial.print("Height ");
+			//Serial.print(h_max);
 
 			unsigned int time_passed = millis() - timer;
 			timer = millis();
@@ -199,6 +199,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 				symmetry[numreps] = (1.0*acceleration_accum_down / acceleration_accum_up);
 
 				numreps++;
+				/*
 				Serial.print("	reps: ");
 				Serial.print(numreps);
 				Serial.print(", ACCUM up : ");
@@ -211,6 +212,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 				//Serial.println(effort);
 				Serial.print(", symmetry: ");
 				Serial.println(symmetry[numreps-1]);
+				*/
 			}
 			acceleration_accum_down = 0;
 			acceleration_accum_up = 0;
@@ -238,7 +240,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 		//slowly reduce estimated height when device is not in motion
 		if (still == 1) {
 			//Serial.println("dec heihgt");
-			height = height*0.999;
+			//height = height*0.999;
 		}
 
 		//reset height tracking when device is on the ground
@@ -255,21 +257,21 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 
 		dir_last = dir;
 
-		/*	//for debugging
+			//for debugging
 		//Serial.print(" dir: ");
-		Serial.print(dir);
-		Serial.print(" , ");
+		//Serial.print(dir);
+		//Serial.print(" , ");
 		//Serial.print("reps completed: "); Serial.println(numreps);
-		Serial.print(height);
-		Serial.print(", ");
-		Serial.print(vnow);
-		Serial.print(", ");
-		Serial.println(buf_smooth_WORLDACCEL[2][data_ptr]);
+		//Serial.println(height);
+		//Serial.println(", ");
+		//Serial.print(vnow);
+		//Serial.print(", ");
+		//Serial.println(buf_smooth_WORLDACCEL[2][data_ptr]);
 		//Serial.print(", ");
 		//Serial.println(h_max);
 		//Serial.print(" reps: ");
 		//Serial.println(numreps);
-		*/
+		//*/
 		
 	}
 	if (numreps == reps) {

@@ -82,15 +82,18 @@ void iirLPF(int rough[3][BUFFER_SIZE], int smooth[3][BUFFER_SIZE], unsigned int 
 }
 
 //HPF for acceleration, a higher value of alpha yields a higher cutoff frequency.
+//2nd order 
 void iirHPFA(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int pointer, int axis) {
-	static float xa[2], ya[2];
-	static float gain = 1.003141603;
+	static float xa[3], ya[3];
+	static float gain = 1.004452767;
 
 	xa[0] = xa[1];
-	xa[1] = rough[axis][pointer] / gain;
+	xa[1] = xa[2];
+	xa[2] = rough[axis][pointer] / gain;
 	ya[0] = ya[1];
-	ya[1] = (xa[1] - xa[0]) + (0.9937364715 * ya[0]);
-	hpf[axis][pointer] = ya[1];
+	ya[1] = ya[2];
+	ya[2] = (xa[0] + xa[2]) - 2 * xa[1] + (-0.9911535959 * ya[0]) + (1.9911142922 * ya[1]);
+	hpf[axis][pointer] = ya[2];
 
 }
 
