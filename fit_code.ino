@@ -45,6 +45,7 @@ void loop() {
 	static bool buttonPress = false;
 	static int encoderChange = 0;
 
+
 	//************************************************************************************************************
 	while (!mpuInterrupt && fifoCount < packetSize) {
 		/* IDLE WORK GOES HERE 
