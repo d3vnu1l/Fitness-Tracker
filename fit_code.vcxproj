@@ -93,6 +93,7 @@
     <ClInclude Include="exercises.h">
       <FileType>CppCode</FileType>
     </ClInclude>
+    <ClInclude Include="Fix.h" />
     <ClInclude Include="state.h">
       <FileType>CppCode</FileType>
     </ClInclude>
@@ -106,6 +107,7 @@
     <ClCompile Include="dmp.cpp" />
     <ClCompile Include="eepromUtilities.cpp" />
     <ClCompile Include="exercises.cpp" />
+    <ClCompile Include="Fix.cpp" />
     <ClCompile Include="state.cpp" />
     <ClCompile Include="utilities.cpp" />
   </ItemGroup>

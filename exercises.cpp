@@ -199,7 +199,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 				symmetry[numreps] = (1.0*acceleration_accum_down / acceleration_accum_up);
 
 				numreps++;
-				/*
+				
 				Serial.print("	reps: ");
 				Serial.print(numreps);
 				Serial.print(", ACCUM up : ");
@@ -212,7 +212,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 				//Serial.println(effort);
 				Serial.print(", symmetry: ");
 				Serial.println(symmetry[numreps-1]);
-				*/
+				
 			}
 			acceleration_accum_down = 0;
 			acceleration_accum_up = 0;

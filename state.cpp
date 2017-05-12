@@ -11,11 +11,12 @@ void _mainMenu(bool buttonPress, int encoderChange) {
 	static int index = 0;					//holds menu index
 	int dif = (index + encoderChange);		//get number of encoder turns
 	if (buttonPress == false) {
-		if (dif >= 0 && dif <= 2)			//do not let index variable exceed number of states
+		if (dif >= 0 && dif <= 3)			//do not let index variable exceed number of states
 			index = dif;					//map 'mode' variable to states
 
 
 		// /*	//Display
+		/*
 		switch (index)
 		{
 		case 0:
@@ -28,6 +29,7 @@ void _mainMenu(bool buttonPress, int encoderChange) {
 			Serial.println("Settings\r");
 			break;
 		}
+		*/
 		// */
 	}
 	else {

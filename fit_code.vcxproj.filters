@@ -42,6 +42,9 @@
     <ClInclude Include="blueTooth.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Fix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dmp.cpp">
@@ -60,6 +63,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="blueTooth.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Fix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

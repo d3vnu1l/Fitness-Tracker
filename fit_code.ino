@@ -4,6 +4,7 @@
 #include "exercises.h"
 #include "state.h"
 #include "eepromUtilities.h"
+#include "blueTooth.h"
 #include "EEPROM.h"
 
 // ================================================================
@@ -36,6 +37,7 @@ void setup() {
 	pinMode(SLED, OUTPUT);
 	if (EEPROM.read(INITIALIZED_ADDR) == 0) resetMemory();				//configures memory if first time use
 	initBuffers(buf_YPR, buf_WORLDACCEL, buf_smooth_WORLDACCEL);
+	Serial.begin(115200); while (!Serial);
 	dmp_init();
 	time = millis();
 }
@@ -45,6 +47,8 @@ void loop() {
 	static bool buttonPress = false;
 	static int encoderChange = 0;
 
+	 
+	//btSend("test", iTos(state)); //**//
 
 	//************************************************************************************************************
 	while (!mpuInterrupt && fifoCount < packetSize) {
@@ -60,6 +64,9 @@ void loop() {
 		*/
 
 		if (processedData == false) {
+			//kill cycles to emulate 8mhz operation
+			//for (int k = 0; k < 30000; k++);	//40,000 is cycles to waste to emulate 8mhz
+
 			if (state == mainMenu)                                                                 //start
 			{
 				_mainMenu(buttonPress, encoderChange);
@@ -108,7 +115,7 @@ void loop() {
 	iirLPF(buf_hpf_WORLDACCEL, buf_smooth_WORLDACCEL, data_ptr, 2);		//low pass filter
 
 	 //DEBUGGING USE
-	//Serial.print(buf_WORLDACCEL[2][data_ptr]);
+	Serial.println(buf_WORLDACCEL[2][data_ptr]);
 	//Serial.print(", ");
 	//Serial.print(buf_hpf_WORLDACCEL[2][data_ptr]);
 	//Serial.print(", ");
