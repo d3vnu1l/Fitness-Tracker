@@ -1,8 +1,8 @@
-#include "common.h"
-#include "utilities.h"
+#include "headers\common.h"
+#include "headers\utilities.h"
 #include "Arduino.h"
 #include "EEPROM.h"
-#include "eepromUtilities.h"
+#include "headers\eepromUtilities.h"
 
 extern int state, laststate;
 int nextWorkout = 0;		//holds next workout index, required to set new state after 'warmup'
@@ -16,7 +16,7 @@ void _mainMenu(bool buttonPress, int encoderChange) {
 
 
 		// /*	//Display
-		/*
+		
 		switch (index)
 		{
 		case 0:
@@ -29,7 +29,7 @@ void _mainMenu(bool buttonPress, int encoderChange) {
 			Serial.println("Settings\r");
 			break;
 		}
-		*/
+		
 		// */
 	}
 	else {

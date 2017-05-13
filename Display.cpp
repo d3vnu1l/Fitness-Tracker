@@ -5,7 +5,7 @@
 #include <Fonts/FreeMonoBoldOblique18pt7b.h>
 #include <Fonts/FreeSerif9pt7b.h> //Each filename starts with the face name (“FreeMono”, “FreeSerif”, etc.) followed by the style (“Bold”, “Oblique”, none, etc.), font size in points (currently 9, 12, 18 and 24 point sizes are provided) and “7b” to indicate that these contain 7-bit characters (ASCII codes “ ” through “~”); 8-bit fonts (supporting symbols and/or international characters) are not yet provided but may come later.
 
-#include "bitmaps.h"
+#include "resources\bitmaps.h"
 
 
 
@@ -38,19 +38,6 @@ void initScreen() {
 	tft.fillScreen(WHITE);
 	tft.fillCircle(64, 64, 64, BLACK);
 
-}
-
-void loop() {
-	static int reps = 0;
-	static bool bluetoothConnected = false;
-	reps++;
-	if (reps > 3) {
-		reps = 0;
-		bluetoothConnected = !bluetoothConnected;
-	}
-	drawscreenCurls(reps, bluetoothConnected);
-	//delay(1000);
-	Serial.println("ALIVE");
 }
 
 void drawscreenCurls(int reps, bool bluetoothConnected)

@@ -41,7 +41,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <avr/io.h>
 #include <stdlib.h>
 #include <string.h>
-#include "fix.h"
+#include "headers\fix.h"
 
 #define MAX_STRING_SIZE 8
 

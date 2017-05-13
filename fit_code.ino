@@ -1,10 +1,11 @@
-#include "common.h"
-#include "utilities.h"
-#include "dmp.h"
-#include "exercises.h"
-#include "state.h"
-#include "eepromUtilities.h"
-#include "blueTooth.h"
+#include "headers\common.h"
+#include "headers\utilities.h"
+#include "headers\dmp.h"
+#include "headers\exercises.h"
+#include "headers\state.h"
+#include "headers\eepromUtilities.h"
+#include "headers\blueTooth.h"
+#include "headers\Display.h"
 #include "EEPROM.h"
 
 // ================================================================
@@ -35,6 +36,10 @@ void setup() {
 	pinMode(ENCODERPINA, INPUT);
 	pinMode(ENCODERPINB, INPUT);
 	pinMode(BUTTONPIN, INPUT);
+
+	//initScreen();
+	//drawscreenCurls(0, true);
+
 	if (EEPROM.read(INITIALIZED_ADDR) == 0) resetMemory();				//configures memory if first time use
 	initBuffers(buf_YPR, buf_WORLDACCEL, buf_smooth_WORLDACCEL);
 	Serial.begin(115200); while (!Serial);
@@ -115,7 +120,7 @@ void loop() {
 	iirLPF(buf_hpf_WORLDACCEL, buf_smooth_WORLDACCEL, data_ptr, 2);		//low pass filter
 
 	 //DEBUGGING USE
-	Serial.println(buf_WORLDACCEL[2][data_ptr]);
+	//Serial.println(buf_WORLDACCEL[2][data_ptr]);
 	//Serial.print(", ");
 	//Serial.print(buf_hpf_WORLDACCEL[2][data_ptr]);
 	//Serial.print(", ");

@@ -1,8 +1,8 @@
 // Arduino does not provide built in functions for eeprom int and long functions
 //		These are built here
 #include "Arduino.h"
-#include "eepromUtilities.h"
-#include "common.h"
+#include "headers\eepromUtilities.h"
+#include "headers\common.h"
 #include "EEPROM.h"
 
 void writeLong(int address, long value) {

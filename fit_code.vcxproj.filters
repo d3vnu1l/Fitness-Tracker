@@ -18,63 +18,60 @@
     <None Include="fit_code.ino" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="__vm\.fit_code.vsarduino.h">
+    <ClInclude Include="headers\blueTooth.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="common.h">
+    <ClInclude Include="headers\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="dmp.h">
+    <ClInclude Include="headers\Display.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="exercises.h">
+    <ClInclude Include="headers\dmp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="state.h">
+    <ClInclude Include="headers\eepromUtilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utilities.h">
+    <ClInclude Include="headers\exercises.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="eepromUtilities.h">
+    <ClInclude Include="headers\Fix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="blueTooth.h">
+    <ClInclude Include="headers\state.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Fix.h">
+    <ClInclude Include="headers\utilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Display.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="bitmaps.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="resources\bitmaps.h">
+      <Filter>Resource Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="blueTooth.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Display.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="dmp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="eepromUtilities.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="exercises.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Fix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="state.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="utilities.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="eepromUtilities.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="blueTooth.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Fix.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Display.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

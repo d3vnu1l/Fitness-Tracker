@@ -60,6 +60,13 @@
 #define BTNDELAYMS 35
 #define ENCDELAYMS 6
 
+/*
+	Screen
+*/
+#define TFT_CS    53 //uno8
+#define TFT_RST   45 //uno9  
+#define TFT_DC     47//uno10
+
 enum states
 {
 	//menus

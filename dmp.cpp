@@ -1,5 +1,5 @@
 #include "I2Cdev.h"
-#include "common.h"
+#include "headers\common.h"
 
 #include "MPU6050_6Axis_MotionApps20.h"
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
