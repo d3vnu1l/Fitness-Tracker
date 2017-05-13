@@ -5,8 +5,7 @@
 */
 #define ENCODERPINA 50
 #define ENCODERPINB 48
-#define BUTTONPIN 52
-#define SLED 44
+#define BUTTONPIN 46
 #define INTERRUPT_PIN 2	
 
 #define DELAY_VALUE 200

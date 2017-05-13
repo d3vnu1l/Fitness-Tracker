@@ -29,13 +29,11 @@ void _curls(float buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZ
 		}
 		else if (ready == true) {
 			if (angle[data_ptr] <= 30) {
-				digitalWrite(SLED, HIGH);    //Turn on the LED
 				Serial.print("Hold still: %");
 				Serial.println(count);
 				count++;
 			}
 			else {
-				digitalWrite(SLED, LOW);    //Turn off the LED
 				count = 0;
 				Serial.println("move device to level position to begin");
 			}

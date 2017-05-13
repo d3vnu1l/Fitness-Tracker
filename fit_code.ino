@@ -34,7 +34,7 @@ unsigned int data_ptr = 0;
 void setup() {
 	pinMode(ENCODERPINA, INPUT);
 	pinMode(ENCODERPINB, INPUT);
-	pinMode(SLED, OUTPUT);
+	pinMode(BUTTONPIN, INPUT);
 	if (EEPROM.read(INITIALIZED_ADDR) == 0) resetMemory();				//configures memory if first time use
 	initBuffers(buf_YPR, buf_WORLDACCEL, buf_smooth_WORLDACCEL);
 	Serial.begin(115200); while (!Serial);
