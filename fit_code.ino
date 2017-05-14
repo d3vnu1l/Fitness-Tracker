@@ -37,8 +37,8 @@ void setup() {
 	pinMode(ENCODERPINB, INPUT);
 	pinMode(BUTTONPIN, INPUT);
 
-	//initScreen();
-	//drawscreenCurls(0, true);
+	initScreen();
+	drawscreenCurls(0, true);
 
 	if (EEPROM.read(INITIALIZED_ADDR) == 0) resetMemory();				//configures memory if first time use
 	initBuffers(buf_YPR, buf_WORLDACCEL, buf_smooth_WORLDACCEL);
@@ -120,7 +120,7 @@ void loop() {
 	iirLPF(buf_hpf_WORLDACCEL, buf_smooth_WORLDACCEL, data_ptr, 2);		//low pass filter
 
 	 //DEBUGGING USE
-	//Serial.println(buf_WORLDACCEL[2][data_ptr]);
+	//Serial.print(buf_WORLDACCEL[2][data_ptr]);
 	//Serial.print(", ");
 	//Serial.print(buf_hpf_WORLDACCEL[2][data_ptr]);
 	//Serial.print(", ");

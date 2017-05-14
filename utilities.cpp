@@ -2,6 +2,8 @@
 # include "headers\common.h"
 #include "Wire.h"
 #include "Arduino.h"
+#include "headers\Fix.h"
+
 extern int state, laststate;
 
 //Returns one of 3 values;
@@ -77,14 +79,23 @@ void initBuffers(float buf_YPR[][BUFFER_SIZE], int buf_WORLDACCEL[][BUFFER_SIZE]
 
 //lpf for acceleration;			(see: http://www-users.cs.york.ac.uk/~fisher/mkfilter/trad.html)
 void iirLPF(int rough[3][BUFFER_SIZE], int smooth[3][BUFFER_SIZE], unsigned int pointer, int axis) {
-	static float xa[2], ya[2];
-	static float gain = 8.915815088;
+	volatile static int32_t xa[2], ya[2];
+	volatile static const int32_t gain = ftok(8.9158);
+	volatile static const int32_t k1 = ftok(0.7756);
+	volatile int32_t sample = itok(rough[axis][pointer]);
+
+	//static float xa[2], ya[2];
+	//static float gain = 8.915815088;
+	Serial.println((String)ktoi(sample));
 
 	xa[0] = xa[1];
-	xa[1] = rough[axis][pointer] / gain;
+	xa[1] = FP_Divide(sample, gain);
 	ya[0] = ya[1];
-	ya[1] = (xa[1] + xa[0]) + (0.7756795110 * ya[0]);
-	smooth[axis][pointer] = ya[1];
+
+
+	ya[1] = (xa[1] + xa[0]) + (FP_Multiply(k1, ya[0]));
+	
+	smooth[axis][pointer] = ktoi(ya[1]);
 }
 
 //HPF for acceleration, a higher value of alpha yields a higher cutoff frequency.
