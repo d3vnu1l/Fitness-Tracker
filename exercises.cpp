@@ -145,9 +145,6 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 	static int vnow = 0;	//*
 	static float height = 0;	//*
 	static float h_max = 0, h_min = 0;	//*
-	//filter vars
-	static float s = .3;
-	static float s_alpha = .00005;
 	static int still_zoffset = 0;
 	//movement type vars
 	static int dir_last = 0;
@@ -172,14 +169,14 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 
 		//else calculate new velocity
 		else
-			vnow = vlast + (.01*buf_smooth_WORLDACCEL[2][data_ptr]);
+			vnow = vlast + (.02*buf_smooth_WORLDACCEL[2][data_ptr]);
 	
 		velocity[2][data_ptr] = vnow;
 
 		iirHPFV(velocity, velocity_hpf, data_ptr, 2);
 
 		//calculate new height
-		height = height +  (0.01 * velocity_hpf[2][data_ptr]);
+		height = height +  (0.02 * velocity_hpf[2][data_ptr]);
 
 
 		if (h_max > BENCHPRESS_MAX && vlast > 0 && vnow < 0) {	//ERROR RESET 
@@ -224,9 +221,9 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 		//if (height <= h_min) h_min = height;
 
 		//get information about type of movement using stored accelo data
-		deadstill = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 9, 4);
-		still = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 3, 10);
-		dir = directionDetect(velocity, data_ptr, 0, 100, 10);
+		deadstill = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 4, 4);
+		//still = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 3, 10);
+		dir = directionDetect(velocity, data_ptr, 0, 100, 5);
 		if (dir == 200) {
 			if (buf_smooth_WORLDACCEL[2][data_ptr] > 25)
 				acceleration_accum_up += buf_smooth_WORLDACCEL[2][data_ptr];
@@ -332,14 +329,14 @@ void _squats(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, in
 
 		//else calculate new velocity
 		else
-			vnow = vlast + (.01*buf_smooth_WORLDACCEL[2][data_ptr]);
+			vnow = vlast + (.02*buf_smooth_WORLDACCEL[2][data_ptr]);
 
 		velocity[2][data_ptr] = vnow;
 
 		iirHPFV(velocity, velocity_hpf, data_ptr, 2);
 
 		//calculate new height
-		height = height + (0.01 * velocity_hpf[2][data_ptr]);
+		height = height + (0.02 * velocity_hpf[2][data_ptr]);
 
 
 		if (h_max > BENCHPRESS_MAX && vlast > 0 && vnow < 0) {	//ERROR RESET 
