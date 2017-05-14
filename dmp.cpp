@@ -24,8 +24,6 @@ VectorFloat gravity;    // [x, y, z]            gravity vector
 float euler[3];         // [psi, theta, phi]    Euler angle container
 float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
 
-bool everyOther = false;
-
 // ================================================================
 // ===               INTERRUPT DETECTION ROUTINE                ===
 // ================================================================
@@ -82,10 +80,8 @@ void dmp_init(void) {
 	}
 }
 
-bool dmp_sample(int buf_YPR[][BUFFER_SIZE], int buf_WORLDACCEL[][BUFFER_SIZE], unsigned int &data_ptr) {
+void dmp_sample(int buf_YPR[][BUFFER_SIZE], int buf_WORLDACCEL[][BUFFER_SIZE], unsigned int &data_ptr) {
 	// if programming failed, don't try to do anything
-	static int x, y, z;
-	static float yaw, pitch, roll;
 	if (!dmpReady) return;
 	mpuInterrupt = false;                                               // reset interrupt flag and get INT_STATUS byte
 	mpuIntStatus = mpu.getIntStatus();
@@ -106,36 +102,18 @@ bool dmp_sample(int buf_YPR[][BUFFER_SIZE], int buf_WORLDACCEL[][BUFFER_SIZE], u
 		mpu.dmpGetAccel(&aa, fifoBuffer);
 		mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
 		mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q);
-		everyOther = !everyOther;
-		if (everyOther == true); {
-			//place in ring buffers (YPR)
-			data_ptr += 1;
-			if (data_ptr == BUFFER_SIZE) data_ptr = 0;
+		//place in ring buffers (YPR)
+		data_ptr += 1;
+		if (data_ptr == BUFFER_SIZE) data_ptr = 0;
 
-			buf_YPR[0][data_ptr] = (yaw +(ypr[0] * 180 / M_PI))/2.0;
-			buf_YPR[1][data_ptr] = (pitch +(ypr[1] * 180 / M_PI))/2.0;
-			buf_YPR[2][data_ptr] = (roll + (ypr[2] * 180 / M_PI))/2.0;
-			//place in ring buffers (ACCEL)
-			buf_WORLDACCEL[0][data_ptr] = (x+(aaWorld.x))/2.0;
-			buf_WORLDACCEL[1][data_ptr] = (y+(aaWorld.y))/2.0;
-			buf_WORLDACCEL[2][data_ptr] = (z+(aaWorld.z))/2.0;
-
-			return true;
-		}
-		else {
-			x = (aaWorld.x);
-			y = (aaWorld.y);
-			z = ((aaWorld.z));
-
-			yaw = (ypr[0] * 180 / M_PI);
-			pitch = (ypr[1] * 180 / M_PI);
-			roll = (ypr[2] * 180 / M_PI);
-
-			return false;
-		}
+		buf_YPR[0][data_ptr] = (ypr[0] * 180 / M_PI);
+		buf_YPR[1][data_ptr] = (ypr[1] * 180 / M_PI);
+		buf_YPR[2][data_ptr] = (ypr[2] * 180 / M_PI);
+		//place in ring buffers (ACCEL)
+		buf_WORLDACCEL[0][data_ptr] = (aaWorld.x);
+		buf_WORLDACCEL[1][data_ptr] = (aaWorld.y);
+		buf_WORLDACCEL[2][data_ptr] = ((aaWorld.z));
 	}
-
-	return false;
 
 }
 

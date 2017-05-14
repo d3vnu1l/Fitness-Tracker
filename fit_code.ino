@@ -113,22 +113,23 @@ void loop() {
 	//Serial.println(micros());
 	//1. handle new data//
 	//Serial.println(micros());
-	if (dmp_sample(buf_YPR, buf_WORLDACCEL, data_ptr)==true) {
-		//2. filter new sample//
-		iirHPFA(buf_WORLDACCEL, buf_hpf_WORLDACCEL, data_ptr, 2);			//High pass filter
-		iirLPF(buf_hpf_WORLDACCEL, buf_smooth_WORLDACCEL, data_ptr, 2);		//low pass filter
-		//Serial.println(micros());
-		 //DEBUGGING USE
-		//Serial.print(buf_WORLDACCEL[2][data_ptr]);
-		//Serial.print(", ");
-		//Serial.print(buf_hpf_WORLDACCEL[2][data_ptr]);
-		//Serial.print(", ");
-		//Serial.println(buf_smooth_WORLDACCEL[2][data_ptr]);
-		//Serial.println(micros());
+	dmp_sample(buf_YPR, buf_WORLDACCEL, data_ptr);
 
-		//3. flag that new data is available//
-		processedData = false;
-	}
+	//2. filter new sample//
+	iirHPFA(buf_WORLDACCEL, buf_hpf_WORLDACCEL, data_ptr, 2);			//High pass filter
+	iirLPF(buf_hpf_WORLDACCEL, buf_smooth_WORLDACCEL, data_ptr, 2);		//low pass filter
+	
+	//Serial.println(micros());
+	 //DEBUGGING USE
+	//Serial.print(buf_WORLDACCEL[2][data_ptr]);
+	//Serial.print(", ");
+	//Serial.print(buf_hpf_WORLDACCEL[2][data_ptr]);
+	//Serial.print(", ");
+	//Serial.println(buf_smooth_WORLDACCEL[2][data_ptr]);
+	//Serial.println(micros());
+
+	//3. flag that new data is available//
+	processedData = false;
 
 }
 

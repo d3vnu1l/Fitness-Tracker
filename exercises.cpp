@@ -132,6 +132,7 @@ void _curls(int buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE]
 }
 
 void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, int reps) {
+	Serial.println("");
 	static int numreps = -1;	//*				//number of reps, set to -1 before exercise is started
 	//height tracking vars
 	static int velocity[3][BUFFER_SIZE];
@@ -144,9 +145,10 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 	static int vnow = 0;	//*
 	static float height = 0;	//*
 	static float h_max = 0, h_min = 0;	//*
-
+	//filter vars
+	static float s = .3;
+	static float s_alpha = .00005;
 	static int still_zoffset = 0;
-
 	//movement type vars
 	static int dir_last = 0;
 	int deadstill, still, dir;
@@ -170,14 +172,14 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 
 		//else calculate new velocity
 		else
-			vnow = vlast + (.02*buf_smooth_WORLDACCEL[2][data_ptr]);
+			vnow = vlast + (.01*buf_smooth_WORLDACCEL[2][data_ptr]);
 	
 		velocity[2][data_ptr] = vnow;
 
 		iirHPFV(velocity, velocity_hpf, data_ptr, 2);
 
 		//calculate new height
-		height = height +  (0.02 * velocity_hpf[2][data_ptr]);
+		height = height +  (0.01 * velocity_hpf[2][data_ptr]);
 
 
 		if (h_max > BENCHPRESS_MAX && vlast > 0 && vnow < 0) {	//ERROR RESET 
@@ -222,9 +224,9 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 		//if (height <= h_min) h_min = height;
 
 		//get information about type of movement using stored accelo data
-		deadstill = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 4, 4);
-		//still = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 2, 10);
-		dir = directionDetect(velocity, data_ptr, 0, 100, 5);
+		deadstill = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 9, 4);
+		still = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 3, 10);
+		dir = directionDetect(velocity, data_ptr, 0, 100, 10);
 		if (dir == 200) {
 			if (buf_smooth_WORLDACCEL[2][data_ptr] > 25)
 				acceleration_accum_up += buf_smooth_WORLDACCEL[2][data_ptr];
@@ -255,17 +257,19 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 		dir_last = dir;
 
 			//for debugging
-		Serial.print("d ");
-		Serial.print(dir);
-		Serial.print(", h ");
-		Serial.print(height);
-		Serial.print(", v ");
-		Serial.print(vnow);
-		Serial.print(", a ");
-		Serial.print(buf_smooth_WORLDACCEL[2][data_ptr]);
-		Serial.print(", reps ");
+		//Serial.print(" dir: ");
+		//Serial.print(dir);
+		//Serial.print(" , ");
+		//Serial.print("reps completed: "); Serial.println(numreps);
+		//Serial.println(height);
+		//Serial.println(", ");
+		//Serial.print(vnow);
+		//Serial.print(", ");
+		//Serial.println(buf_smooth_WORLDACCEL[2][data_ptr]);
+		//Serial.print(", ");
 		//Serial.println(h_max);
-		Serial.println(numreps);
+		//Serial.print(" reps: ");
+		//Serial.println(numreps);
 		//*/
 		
 	}
