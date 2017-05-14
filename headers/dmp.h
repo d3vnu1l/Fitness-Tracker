@@ -3,7 +3,7 @@
 #include "common.h"
 
 void dmp_init(void);
-void dmp_sample(int [][BUFFER_SIZE], int [][BUFFER_SIZE], unsigned int &);
+bool dmp_sample(int [][BUFFER_SIZE], int [][BUFFER_SIZE], unsigned int &);
 
 #endif  /* DMP_H */
 
