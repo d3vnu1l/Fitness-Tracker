@@ -21,8 +21,7 @@ extern uint16_t fifoCount;
 extern volatile bool mpuInterrupt;
 
 //MPU TRACKING VARS
-float buf_YPR[3][BUFFER_SIZE];
-int buf_RAWACCEL[3][BUFFER_SIZE];
+int buf_YPR[3][BUFFER_SIZE];
 int buf_WORLDACCEL[3][BUFFER_SIZE];
 int buf_smooth_WORLDACCEL[3][BUFFER_SIZE];
 int buf_hpf_WORLDACCEL[3][BUFFER_SIZE];
@@ -37,8 +36,8 @@ void setup() {
 	pinMode(ENCODERPINB, INPUT);
 	pinMode(BUTTONPIN, INPUT);
 
-	//initScreen();
-	//drawscreenCurls(0, true);
+	initScreen();
+	drawscreenCurls(0, true);
 
 	if (EEPROM.read(INITIALIZED_ADDR) == 0) resetMemory();				//configures memory if first time use
 	initBuffers(buf_YPR, buf_WORLDACCEL, buf_smooth_WORLDACCEL);
@@ -70,7 +69,7 @@ void loop() {
 
 		if (processedData == false) {
 			//kill cycles to emulate 8mhz operation
-			//for (int k = 0; k < 30000; k++);	//40,000 is cycles to waste to emulate 8mhz
+			//for (int k = 0; k < 34000; k++);	//40,000 is cycles to waste to emulate 8mhz
 
 			if (state == mainMenu)                                                                 //start
 			{
@@ -113,14 +112,16 @@ void loop() {
 	//************************************************************************************************************
 	//Serial.println(micros());
 	//1. handle new data//
-	dmp_sample(buf_YPR, buf_WORLDACCEL, buf_RAWACCEL, data_ptr);
+	//Serial.println(micros());
+	dmp_sample(buf_YPR, buf_WORLDACCEL, data_ptr);
 
 	//2. filter new sample//
 	iirHPFA(buf_WORLDACCEL, buf_hpf_WORLDACCEL, data_ptr, 2);			//High pass filter
 	iirLPF(buf_hpf_WORLDACCEL, buf_smooth_WORLDACCEL, data_ptr, 2);		//low pass filter
-
+	
+	//Serial.println(micros());
 	 //DEBUGGING USE
-	//Serial.println(buf_WORLDACCEL[2][data_ptr]);
+	//Serial.print(buf_WORLDACCEL[2][data_ptr]);
 	//Serial.print(", ");
 	//Serial.print(buf_hpf_WORLDACCEL[2][data_ptr]);
 	//Serial.print(", ");

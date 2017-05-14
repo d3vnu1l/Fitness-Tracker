@@ -80,7 +80,7 @@ void dmp_init(void) {
 	}
 }
 
-void dmp_sample(float buf_YPR[][BUFFER_SIZE], int buf_WORLDACCEL[][BUFFER_SIZE], int buf_RAWACCEL[][BUFFER_SIZE], unsigned int &data_ptr) {
+void dmp_sample(int buf_YPR[][BUFFER_SIZE], int buf_WORLDACCEL[][BUFFER_SIZE], unsigned int &data_ptr) {
 	// if programming failed, don't try to do anything
 	if (!dmpReady) return;
 	mpuInterrupt = false;                                               // reset interrupt flag and get INT_STATUS byte
@@ -105,6 +105,7 @@ void dmp_sample(float buf_YPR[][BUFFER_SIZE], int buf_WORLDACCEL[][BUFFER_SIZE],
 		//place in ring buffers (YPR)
 		data_ptr += 1;
 		if (data_ptr == BUFFER_SIZE) data_ptr = 0;
+
 		buf_YPR[0][data_ptr] = (ypr[0] * 180 / M_PI);
 		buf_YPR[1][data_ptr] = (ypr[1] * 180 / M_PI);
 		buf_YPR[2][data_ptr] = (ypr[2] * 180 / M_PI);
@@ -112,10 +113,6 @@ void dmp_sample(float buf_YPR[][BUFFER_SIZE], int buf_WORLDACCEL[][BUFFER_SIZE],
 		buf_WORLDACCEL[0][data_ptr] = (aaWorld.x);
 		buf_WORLDACCEL[1][data_ptr] = (aaWorld.y);
 		buf_WORLDACCEL[2][data_ptr] = ((aaWorld.z));
-
-		buf_RAWACCEL[0][data_ptr]=(aa.x);
-		buf_RAWACCEL[1][data_ptr] = (aa.y);
-		buf_RAWACCEL[2][data_ptr] = (aa.z);
 	}
 
 }

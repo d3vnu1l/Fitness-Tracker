@@ -82,6 +82,8 @@ enum states
 	curls,
 	benchpress,
 	squats,
+	overhead,
+	deadlift,
 
 	cooldown,
 };

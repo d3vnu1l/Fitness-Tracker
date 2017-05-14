@@ -58,11 +58,11 @@ bool buttonPressed() {
 }
 
 //clears buffers to zero. generally only called from the setup() on device startup
-void initBuffers(float buf_YPR[][BUFFER_SIZE], int buf_WORLDACCEL[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE]) {
+void initBuffers(int buf_YPR[][BUFFER_SIZE], int buf_WORLDACCEL[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE]) {
 	for (int i = 0; i < BUFFER_SIZE; i++) {
-		buf_YPR[0][i] = 0.0;
-		buf_YPR[1][i] = 0.0;
-		buf_YPR[2][i] = 0.0;
+		buf_YPR[0][i] = 0;
+		buf_YPR[1][i] = 0;
+		buf_YPR[2][i] = 0;
 
 		buf_WORLDACCEL[0][i] = 0;
 		buf_WORLDACCEL[1][i] = 0;
@@ -77,8 +77,9 @@ void initBuffers(float buf_YPR[][BUFFER_SIZE], int buf_WORLDACCEL[][BUFFER_SIZE]
 
 //lpf for acceleration;			(see: http://www-users.cs.york.ac.uk/~fisher/mkfilter/trad.html)
 void iirLPF(int rough[3][BUFFER_SIZE], int smooth[3][BUFFER_SIZE], unsigned int pointer, int axis) {
-	static float xa[2], ya[2];
-	static float gain = 8.915815088;
+
+	static int xa[2], ya[2];
+	const float gain = 8.915815088;
 
 	xa[0] = xa[1];
 	xa[1] = rough[axis][pointer] / gain;
@@ -88,25 +89,24 @@ void iirLPF(int rough[3][BUFFER_SIZE], int smooth[3][BUFFER_SIZE], unsigned int 
 }
 
 //HPF for acceleration, a higher value of alpha yields a higher cutoff frequency.
-//2nd order 
+//1 order 
 void iirHPFA(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int pointer, int axis) {
-	static float xa[3], ya[3];
-	static float gain = 1.004452767;
+
+	static int xa[3], ya[3];
+	const float gain = 1.004452767;
 
 	xa[0] = xa[1];
-	xa[1] = xa[2];
-	xa[2] = rough[axis][pointer] / gain;
+	xa[1] = rough[axis][pointer] / gain;
 	ya[0] = ya[1];
-	ya[1] = ya[2];
-	ya[2] = (xa[0] + xa[2]) - 2 * xa[1] + (-0.9911535959 * ya[0]) + (1.9911142922 * ya[1]);
-	hpf[axis][pointer] = ya[2];
+	ya[1] = (xa[1] - xa[0]) + (0.9924884599 * ya[0]);
+	hpf[axis][pointer] = ya[1];
 
 }
 
 //HPF for velocity
-float iirHPFV(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int pointer, int axis) {
-	static float xv[2], yv[2];
-	static float gain = 1.004712424;
+void iirHPFV(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int pointer, int axis) {
+	static int xv[2], yv[2];
+	const float gain = 1.004712424;
 
 	xv[0] = xv[1];
 	xv[1] = rough[axis][pointer] / gain;

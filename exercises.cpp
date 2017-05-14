@@ -5,15 +5,15 @@
 
 extern int state, laststate;
 
-void _curls(float buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, bool buttonState, int reps) {
+void _curls(int buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, bool buttonState, int reps) {
 	static int numreps = -1;							//number of repetitions
-	static float min = 90, max = 0;						//track curl span
+	static char min = 90, max = 0;						//track curl span
 	static bool ready = false;
 	static bool pivot = false, up = false;
-	static float level = 0;
+	static char level = 0;
 	static int record = 0;
 	static int count = 0;
-	static float angle[BUFFER_SIZE];
+	static char angle[BUFFER_SIZE];
 	static unsigned long timer;							//time between reps
 
 	angle[data_ptr] = abs((abs(buf_YPR[1][data_ptr]) + abs(buf_YPR[2][data_ptr])) - level);
@@ -132,6 +132,7 @@ void _curls(float buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZ
 }
 
 void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, int reps) {
+	Serial.println("");
 	static int numreps = -1;	//*				//number of reps, set to -1 before exercise is started
 	//height tracking vars
 	static int velocity[3][BUFFER_SIZE];
