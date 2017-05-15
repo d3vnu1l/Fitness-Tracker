@@ -38,7 +38,7 @@ void _curls(int buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE]
 				Serial.println("move device to level position to begin");
 			}
 			if (count >= 100) {				//reaching 100 stable cycles begins workout
-				numreps = 0;		
+				numreps = 0;
 				count = 0;
 				numreps = 0;
 				timer = millis();
@@ -86,7 +86,7 @@ void _curls(int buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE]
 		if (angle[data_ptr] > max)
 			max = angle[data_ptr];
 
-		if (pivot == false){						//this section looks for the acceleration component caused by switching from up to downward curl
+		if (pivot == false) {						//this section looks for the acceleration component caused by switching from up to downward curl
 			if (amag < ACC_MAG) {
 				count++;
 				if (count >= ACC_MSEC && max > CURLS_UP_THRESH) {
@@ -102,19 +102,19 @@ void _curls(int buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE]
 				count = 0;
 			}
 		}
-		else if (angle[data_ptr] < CURLS_DOWN_THRESH && up ==true && pivot == true) {				//CHANGE THESE (LOWER REP THRESHOLD)
+		else if (angle[data_ptr] < CURLS_DOWN_THRESH && up == true && pivot == true) {				//CHANGE THESE (LOWER REP THRESHOLD)
 			if (angle[data_ptr] > min) {
 				numreps += 1;
 				up = false;
 				pivot = false;
-				
+
 				Serial.print("Reps: ");
 				Serial.print(numreps);
 				Serial.print(", Degrs: ");
 				Serial.print(max);
 				max = 0;
 				Serial.print(", time: ");
-				Serial.println(millis()-timer);
+				Serial.println(millis() - timer);
 				timer = millis();
 				if (numreps > record) {
 					record = numreps;
@@ -132,7 +132,6 @@ void _curls(int buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE]
 }
 
 void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, int reps) {
-	Serial.println("");
 	static int numreps = -1;	//*				//number of reps, set to -1 before exercise is started
 	//height tracking vars
 	static int velocity[3][BUFFER_SIZE];
@@ -164,30 +163,34 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 	if (numreps < reps) {
 		//attempt to dampen subtle acceleration effects on velocity
 		int amag = abs(buf_smooth_WORLDACCEL[2][data_ptr]);
-		if (amag < 250)
-			vnow = vlast;
-
+		//if (amag < 5)
+		//	vnow = vlast;
 		//else calculate new velocity
-		else
+		//else
 			vnow = vlast + (.02*buf_smooth_WORLDACCEL[2][data_ptr]);
-	
+
 		velocity[2][data_ptr] = vnow;
 
 		iirHPFV(velocity, velocity_hpf, data_ptr, 2);
+		//velocity_hpf[2][data_ptr] = velocity[2][data_ptr];
 
 		//calculate new height
-		height = height +  (0.02 * velocity_hpf[2][data_ptr]);
+		height = height + (0.02 * velocity_hpf[2][data_ptr]);
+
+		dir = directionDetect(velocity, data_ptr, 0, 20, 1);
 
 
-		if (h_max > BENCHPRESS_MAX && vlast > 0 && vnow < 0) {	//ERROR RESET 
-			//Serial.print("Height ");
-			//Serial.print(h_max);
+		if (h_max > BENCHPRESS_MIN && vlast > 0 && vnow < 0) {	//ERROR RESET 
+			Serial.print("Height ");
+			Serial.print(h_max);
 
 			unsigned int time_passed = millis() - timer;
 			timer = millis();
 			float _effort = (abs(acceleration_accum_up) / (1.0*time_passed));
 			height = 0;
 			h_max = 0;
+			vnow = 0;
+			vlast = 0;
 
 			if (_effort > 1) {
 				time[numreps] = time_passed;
@@ -195,20 +198,23 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 				symmetry[numreps] = (1.0*acceleration_accum_down / acceleration_accum_up);
 
 				numreps++;
-				
-				Serial.print("	reps: ");
-				Serial.print(numreps);
-				Serial.print(", ACCUM up : ");
-				Serial.print(acceleration_accum_up);
-				Serial.print(", ACCUM dwn : ");
-				Serial.print(acceleration_accum_down);
-				Serial.print(", time passed: ");
-				Serial.print(time[numreps-1]);
-				//Serial.print(", Effort: ");
-				//Serial.println(effort);
-				Serial.print(", symmetry: ");
-				Serial.println(symmetry[numreps-1]);
-				
+
+				if (DEBUG_H == true);
+				else {
+					Serial.print("	reps: ");
+					Serial.print(numreps);
+					Serial.print(", ACCUM up : ");
+					Serial.print(acceleration_accum_up);
+					Serial.print(", ACCUM dwn : ");
+					Serial.print(acceleration_accum_down);
+					Serial.print(", time passed: ");
+					Serial.print(time[numreps - 1]);
+					//Serial.print(", Effort: ");
+					//Serial.println(effort);
+					Serial.print(", symmetry: ");
+					Serial.println(symmetry[numreps - 1]);
+				}
+
 			}
 			acceleration_accum_down = 0;
 			acceleration_accum_up = 0;
@@ -221,15 +227,14 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 		//if (height <= h_min) h_min = height;
 
 		//get information about type of movement using stored accelo data
-		deadstill = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 4, 4);
+		deadstill = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 32, 5);
 		//still = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 3, 10);
-		dir = directionDetect(velocity, data_ptr, 0, 100, 5);
 		if (dir == 200) {
-			if (buf_smooth_WORLDACCEL[2][data_ptr] > 25)
+			if (buf_smooth_WORLDACCEL[2][data_ptr] > 10)
 				acceleration_accum_up += buf_smooth_WORLDACCEL[2][data_ptr];
 		}
 		if (dir == -200) {
-			if (buf_smooth_WORLDACCEL[2][data_ptr] < -25)
+			if (buf_smooth_WORLDACCEL[2][data_ptr] < -10)
 				acceleration_accum_down += abs(buf_smooth_WORLDACCEL[2][data_ptr]);
 		}
 
@@ -250,25 +255,25 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 			timer = millis();
 		}
 
-
 		dir_last = dir;
 
+		if (DEBUG_H == true) {
 			//for debugging
-		//Serial.print(" dir: ");
-		//Serial.print(dir);
-		//Serial.print(" , ");
-		//Serial.print("reps completed: "); Serial.println(numreps);
-		//Serial.println(height);
-		//Serial.println(", ");
-		//Serial.print(vnow);
-		//Serial.print(", ");
-		//Serial.println(buf_smooth_WORLDACCEL[2][data_ptr]);
-		//Serial.print(", ");
-		//Serial.println(h_max);
-		//Serial.print(" reps: ");
-		//Serial.println(numreps);
-		//*/
-		
+			//Serial.print(" dir: ");
+			Serial.print(dir);
+			Serial.print(" , ");
+			//Serial.print("reps completed: "); Serial.println(numreps);
+			Serial.print(height);
+			Serial.print(", ");
+			Serial.print(vnow);
+			Serial.print(", ");
+			Serial.println(buf_smooth_WORLDACCEL[2][data_ptr]);
+			//Serial.print(", ");
+			//Serial.println(h_max);
+			//Serial.print(" reps: ");
+			//Serial.println(numreps);
+		}
+
 	}
 	if (numreps == reps) {
 		//compute averages
@@ -282,7 +287,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 		Serial.print("Effort: ");
 		Serial.print(avEffort / numreps);
 		Serial.print(", Time:");
-		Serial.print((1.0*avTime / numreps)/1000);
+		Serial.print((1.0*avTime / numreps) / 1000);
 		Serial.print(", Sym:");
 		Serial.println(avSym / numreps);
 		numreps = -1;
@@ -339,7 +344,7 @@ void _squats(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, in
 		height = height + (0.02 * velocity_hpf[2][data_ptr]);
 
 
-		if (h_max > BENCHPRESS_MAX && vlast > 0 && vnow < 0) {	//ERROR RESET 
+		if (h_max > BENCHPRESS_MIN && vlast > 0 && vnow < 0) {	//ERROR RESET 
 			Serial.print("Height ");
 			Serial.print(h_max);
 
