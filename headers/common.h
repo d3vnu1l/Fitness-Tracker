@@ -61,7 +61,7 @@
 #define ENCDELAYMS 6
 
 #define DEBUG_A false
-#define DEBUG_H false
+#define DEBUG_H true
 #define DEBUG_T false
 
 /*

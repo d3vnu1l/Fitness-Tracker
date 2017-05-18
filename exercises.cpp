@@ -177,12 +177,12 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 		//calculate new height
 		height = height + (0.02 * velocity_hpf[2][data_ptr]);
 
-		dir = directionDetect(velocity, data_ptr, 0, 20, 1);
+		dir = directionDetect(velocity, data_ptr, 0, 18, 1);
 
 
-		if (h_max > BENCHPRESS_MIN && vlast > 0 && vnow < 0) {	//ERROR RESET 
+		if ((h_max-h_min) > BENCHPRESS_MIN && vlast > 0 && vnow < 0) {	//ERROR RESET 
 			Serial.print("Height ");
-			Serial.print(h_max);
+			Serial.print(h_max-h_min);
 
 			unsigned int time_passed = millis() - timer;
 			timer = millis();
@@ -194,12 +194,14 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 
 			if (_effort > 1) {
 				time[numreps] = time_passed;
+				Serial.print(" , ");
+				Serial.print(_effort);
 				effort[numreps] = _effort;
 				symmetry[numreps] = (1.0*acceleration_accum_down / acceleration_accum_up);
 
 				numreps++;
 
-				if (DEBUG_H == true);
+				if (DEBUG_H == true) Serial.println("   rep***************");
 				else {
 					Serial.print("	reps: ");
 					Serial.print(numreps);
@@ -209,8 +211,8 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 					Serial.print(acceleration_accum_down);
 					Serial.print(", time passed: ");
 					Serial.print(time[numreps - 1]);
-					//Serial.print(", Effort: ");
-					//Serial.println(effort);
+					Serial.print(", Effort: ");
+					Serial.print(effort[numreps-1]);
 					Serial.print(", symmetry: ");
 					Serial.println(symmetry[numreps - 1]);
 				}
@@ -230,11 +232,11 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 		deadstill = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 32, 5);
 		//still = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 3, 10);
 		if (dir == 200) {
-			if (buf_smooth_WORLDACCEL[2][data_ptr] > 10)
+			if (buf_smooth_WORLDACCEL[2][data_ptr] > 20)
 				acceleration_accum_up += buf_smooth_WORLDACCEL[2][data_ptr];
 		}
 		if (dir == -200) {
-			if (buf_smooth_WORLDACCEL[2][data_ptr] < -10)
+			if (buf_smooth_WORLDACCEL[2][data_ptr] < -20)
 				acceleration_accum_down += abs(buf_smooth_WORLDACCEL[2][data_ptr]);
 		}
 
@@ -246,12 +248,14 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 
 		//reset height tracking when device is on the ground
 		if (deadstill == 1) {
-			//Serial.print("reset still");
+			Serial.print("reset still");
 			height = 0;
 			vlast = 0;
 			vnow = 0;
 			dir_last = 0;
 			dir = 0;
+			acceleration_accum_down = 0;
+			acceleration_accum_up = 0;
 			timer = millis();
 		}
 

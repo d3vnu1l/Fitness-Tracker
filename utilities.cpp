@@ -76,25 +76,25 @@ void initBuffers(int buf_YPR[][BUFFER_SIZE], int buf_WORLDACCEL[][BUFFER_SIZE], 
 
 
 //lpf for acceleration;			(see: http://www-users.cs.york.ac.uk/~fisher/mkfilter/trad.html)
-void iirLPF(int rough[3][BUFFER_SIZE], int smooth[3][BUFFER_SIZE], unsigned int pointer, int axis) {
-	
+void iirLPF(int rough[3][BUFFER_SIZE], int smooth[3][BUFFER_SIZE], unsigned int pointer, int axis) 
+{
 	static int xv[4], yv[4];
-	const float gain = 55.25187588;
+	const float gain = 48.81977006;
 
 	xv[0] = xv[1]; xv[1] = xv[2]; xv[2] = xv[3];
 	xv[3] = rough[axis][pointer] / gain;
 	yv[0] = yv[1]; yv[1] = yv[2]; yv[2] = yv[3];
 	yv[3] = (xv[0] + xv[3]) + 3 * (xv[1] + xv[2])
-		+ (0.2780599176 * yv[0]) + (-1.1828932620 * yv[1])
-		+ (1.7600418803 * yv[2]);
+		+ (0.2600665882 * yv[0]) + (-1.1234478194 * yv[1])
+		+ (1.6995131919 * yv[2]);
 	smooth[axis][pointer] = yv[3];
 	
 }
 
 //HPF for acceleration, a higher value of alpha yields a higher cutoff frequency.
 //1 order 
-void iirHPFA(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int pointer, int axis) {
-
+void iirHPFA(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int pointer, int axis) 
+{
 	static int xv[3], yv[3];
 	const float gain = 1.008168323;
 
@@ -108,7 +108,8 @@ void iirHPFA(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int po
 }
 
 //HPF for velocity
-void iirHPFV(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int pointer, int axis) {
+void iirHPFV(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int pointer, int axis) 
+{
 	static int xv[2], yv[2];
 	const float gain = 1.004398258;
 
