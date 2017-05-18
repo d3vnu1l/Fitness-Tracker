@@ -16,13 +16,14 @@ uint16_t packetSize;    // expected DMP packet size (default is 42 bytes)
 uint16_t fifoCount;     // count of all bytes currently in FIFO
 uint8_t fifoBuffer[64]; // FIFO storage buffer
 //ORIENTATION VARS//
-Quaternion q;           // [w, x, y, z]         quaternion container
+Quaternion q, qlast, qavg;           // [w, x, y, z]         quaternion container
 VectorInt16 aa;         // [x, y, z]            accel sensor measurements
 VectorInt16 aaReal;     // [x, y, z]            gravity-free accel sensor measurements
 VectorInt16 aaWorld;    // [x, y, z]            world-frame accel sensor measurements
 VectorFloat gravity;    // [x, y, z]            gravity vector
 float euler[3];         // [psi, theta, phi]    Euler angle container
 float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
+
 
 // ================================================================
 // ===               INTERRUPT DETECTION ROUTINE                ===
@@ -94,13 +95,15 @@ void dmp_sample(int buf_YPR[][BUFFER_SIZE], int buf_WORLDACCEL[][BUFFER_SIZE], u
 		while (fifoCount < packetSize) fifoCount = mpu.getFIFOCount();    // wait for correct available data length, should be a VERY short wait
 		mpu.getFIFOBytes(fifoBuffer, packetSize);                         // read a packet from FIFO
 		fifoCount -= packetSize;                                          // track FIFO count here in case there is > 1 packet available
-		//store Euler angles in degrees
+
+		//get quaternion and gravity
 		mpu.dmpGetQuaternion(&q, fifoBuffer);
 		mpu.dmpGetGravity(&gravity, &q);
-		mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
+		//store Euler angles in degrees
+		mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);		//~14*
 		//store real acceleration, adjusted to remove gravity and for orientation
 		mpu.dmpGetAccel(&aa, fifoBuffer);
-		mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
+		mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);		//3*
 		mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q);
 		//place in ring buffers (YPR)
 		data_ptr += 1;

@@ -15,22 +15,23 @@ void _mainMenu(bool buttonPress, int encoderChange) {
 			index = dif;					//map 'mode' variable to states
 
 
-		// /*	//Display
+		//Display
+		if (DEBUG_A == true || DEBUG_H == true);
+		else{
+			switch (index)
+			{
+			case 0:
+				Serial.println("W.O.D.\r");
+				break;
+			case 1:
+				Serial.println("P/R\r");
+				break;
+			case 2:
+				Serial.println("Settings\r");
+				break;
+			}
+	}
 		
-		switch (index)
-		{
-		case 0:
-			Serial.println("W.O.D.\r");
-			break;
-		case 1:
-			Serial.println("P/R\r");
-			break;
-		case 2:
-			Serial.println("Settings\r");
-			break;
-		}
-		
-		// */
 	}
 	else {
 		switch (index)
@@ -175,7 +176,7 @@ void _cooldown() {
 			counting = false;
 			switch (laststate) {
 			case curls:
-				switchState(curls);
+				switchState(benchpress);
 				break;
 			case benchpress:
 				switchState(squats);

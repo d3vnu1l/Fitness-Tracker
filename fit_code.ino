@@ -28,6 +28,8 @@ int buf_hpf_WORLDACCEL[3][BUFFER_SIZE];
 unsigned int data_ptr = 0;
 
 
+
+
 // ================================================================
 // ===                         MAIN                             ===
 // ================================================================
@@ -107,12 +109,14 @@ void loop() {
 			processedData = true;
 			buttonPress = false;		//temporary workaround
 			encoderChange = 0;			//temporary workaround
+			if (DEBUG_T == true) Serial.println(micros());
 		}
 	}
 	//************************************************************************************************************
 	//Serial.println(micros());
 	//1. handle new data//
 	//Serial.println(micros());
+	if(DEBUG_T==true) Serial.println(micros());
 	dmp_sample(buf_YPR, buf_WORLDACCEL, data_ptr);
 
 	//2. filter new sample//
@@ -121,11 +125,13 @@ void loop() {
 	
 	//Serial.println(micros());
 	 //DEBUGGING USE
-	//Serial.print(buf_WORLDACCEL[2][data_ptr]);
-	//Serial.print(", ");
-	//Serial.print(buf_hpf_WORLDACCEL[2][data_ptr]);
-	//Serial.print(", ");
-	//Serial.println(buf_smooth_WORLDACCEL[2][data_ptr]);
+	if (DEBUG_A == true) {
+		Serial.print(buf_WORLDACCEL[2][data_ptr]);
+		Serial.print(", ");
+		Serial.print(buf_hpf_WORLDACCEL[2][data_ptr]);
+		Serial.print(", ");
+		Serial.println(buf_smooth_WORLDACCEL[2][data_ptr]);
+	}
 	//Serial.println(micros());
 
 	//3. flag that new data is available//
