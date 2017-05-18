@@ -7,13 +7,13 @@ extern int state, laststate;
 
 void _curls(int buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, bool buttonState, int reps) {
 	static int numreps = -1;							//number of repetitions
-	static char min = 90, max = 0;						//track curl span
+	static int min = 90, max = 0;						//track curl span
 	static bool ready = false;
 	static bool pivot = false, up = false;
-	static char level = 0;
+	static int level = 0;
 	static int record = 0;
 	static int count = 0;
-	static char angle[BUFFER_SIZE];
+	static int angle[BUFFER_SIZE];
 	static unsigned long timer;							//time between reps
 
 	angle[data_ptr] = abs((abs(buf_YPR[1][data_ptr]) + abs(buf_YPR[2][data_ptr])) - level);
@@ -125,7 +125,7 @@ void _curls(int buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE]
 		if (angle[data_ptr] < min)
 			min = angle[data_ptr];
 	}
-	else if (numreps != -1 && buttonState == true) {											//assign next state here
+	else if (numreps == reps) {											//assign next state here
 		numreps = -1;
 		switchState(cooldown);
 	}
@@ -324,7 +324,7 @@ void _squats(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, in
 
 	if (numreps == -1) {
 		numreps = 0;
-		Serial.println("benchpress...");
+		Serial.println("squats...");
 	}
 	if (numreps < reps) {
 		//attempt to dampen subtle acceleration effects on velocity

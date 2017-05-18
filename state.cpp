@@ -176,7 +176,7 @@ void _cooldown() {
 			counting = false;
 			switch (laststate) {
 			case curls:
-				switchState(curls);
+				switchState(benchpress);
 				break;
 			case benchpress:
 				switchState(squats);
