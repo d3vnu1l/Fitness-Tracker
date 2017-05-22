@@ -2,8 +2,10 @@
 #include "Arduino.h"
 #include "headers\utilities.h"
 #include "EEPROM.h"
+#include "headers\Display.h"
 
 extern int state, laststate;
+extern bool canDraw;
 
 void _curls(int buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, bool buttonState, int reps) {
 	static int numreps = -1;							//number of repetitions
@@ -124,11 +126,14 @@ void _curls(int buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE]
 		}
 		if (angle[data_ptr] < min)
 			min = angle[data_ptr];
+		if (canDraw == true) drawScreen(numreps);
 	}
 	else if (numreps == reps) {											//assign next state here
 		numreps = -1;
 		switchState(cooldown);
 	}
+
+
 }
 
 void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, int reps) {
@@ -229,7 +234,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 		//if (height <= h_min) h_min = height;
 
 		//get information about type of movement using stored accelo data
-		deadstill = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 32, 5);
+		deadstill = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 18, 5);
 		//still = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 3, 10);
 		if (dir == 200) {
 			if (buf_smooth_WORLDACCEL[2][data_ptr] > 20)
@@ -277,7 +282,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 			//Serial.print(" reps: ");
 			//Serial.println(numreps);
 		}
-
+		if (canDraw == true) drawScreen(numreps);
 	}
 	if (numreps == reps) {
 		//compute averages

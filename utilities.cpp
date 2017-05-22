@@ -3,6 +3,7 @@
 #include "Wire.h"
 #include "Arduino.h"
 extern int state, laststate;
+extern int nextWorkout;
 
 //Returns one of 3 values;
 // 0  -no movement
@@ -206,4 +207,3 @@ void switchState(int newstate) {
 	laststate = state;
 	state = newstate;
 }
-

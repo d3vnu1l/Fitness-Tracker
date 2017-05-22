@@ -71,6 +71,6 @@ int readInt(int address) {
 //This function resets the device EEPROM to factory settings
 void resetMemory(void) {
 	EEPROM.write(INITIALIZED_ADDR, 0xFF);		//set device as configured
-	updateInt(WEIGHT_ADDR, 150);				//default weight size is 150
+	updateInt(WEIGHT_CURLS_ADDR, 150);				//default weight size is 150
 
 }

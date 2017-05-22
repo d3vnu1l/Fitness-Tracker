@@ -3,9 +3,12 @@
 #include "Arduino.h"
 #include "EEPROM.h"
 #include "headers\eepromUtilities.h"
+#include "headers\Display.h"
 
 extern int state, laststate;
-int nextWorkout = 0;		//holds next workout index, required to set new state after 'warmup'
+extern exercise_strings ex_disps;
+extern int nextWorkout;		//holds next workout index, required to set new state after 'warmup'
+extern bool canDraw;
 
 void _mainMenu(bool buttonPress, int encoderChange) {
 	static int index = 0;					//holds menu index
@@ -47,35 +50,22 @@ void _mainMenu(bool buttonPress, int encoderChange) {
 			break;
 		}
 	}
+	if (canDraw == true) drawScreen(index);
 }
 
 void _wod(bool buttonState, int encoderChange) {
 	int dif = (nextWorkout + encoderChange);
 	if (buttonState == false) {
-		if (dif >= 0 && dif <= 3)
+		if (dif >= 0 && dif < ex_disps.ex_size)
 			nextWorkout = dif;					//map 'mode' variable to states
 
 		// /*	//Display
-		switch (nextWorkout)
-		{
-		case 0:
-			Serial.println("Curls\r");
-			break;
-		case 1:
-			Serial.println("Bench Press\r");
-			break;
-		case 2:
-			Serial.println("Squats\r");
-			break;
-		case 3:
-			Serial.println("Go Back\r");
-			break;
-		}
+		Serial.println(ex_disps.ex_strings[nextWorkout]);
 		// */
 	}
 	else {
 		//write finalized value
-		if (nextWorkout == 3)
+		if (nextWorkout == (ex_disps.ex_size-1))
 			switchState(laststate);
 		else switchState(chooseWeight);
 	}
@@ -83,10 +73,20 @@ void _wod(bool buttonState, int encoderChange) {
 
 void _chooseWeight(bool buttonState, int encoderChange) {
 	static int index = 0;								//index for start / go back selection
-	static int weight = readInt(WEIGHT_ADDR);			//fetch weight from eeprom
 	static bool weightIsSet = false;
 	int dif;
 
+	//FETCH LAST USED WEIGHT
+	static int weight=-1;
+	if (weight == -1) {
+		weight = 0;
+		if (nextWorkout == 0)
+			weight = readInt(WEIGHT_CURLS_ADDR);			//fetch weight from eeprom
+		else if (nextWorkout == benchpress)
+			weight = readInt(WEIGHT_BENCHPRESS_ADDR);			//fetch weight from eeprom
+		else if (nextWorkout == squats)
+			weight = readInt(WEIGHT_SQUATS_ADDR);			//fetch weight from eeprom
+	}
 
 	//SELECT WEIGHT
 	if (buttonState == false && weightIsSet == false)
@@ -127,6 +127,13 @@ void _chooseWeight(bool buttonState, int encoderChange) {
 		case 0:
 			weightIsSet = false;								//reset ready var
 			index = 0;											//reset index memory (do not retain cursor position)
+			//UPDATE MEMORY EEPROM
+			if (nextWorkout == curls)
+				writeInt(WEIGHT_CURLS_ADDR, weight);			//update weight from eeprom
+			else if (nextWorkout == benchpress)
+				writeInt(WEIGHT_BENCHPRESS_ADDR, weight);			//update weight from eeprom
+			else if (nextWorkout == squats)
+				writeInt(WEIGHT_SQUATS_ADDR, weight);			//update weight from eeprom
 			switchState(warmup);
 			break;
 		case 1:
@@ -192,20 +199,27 @@ void _cooldown() {
 void _settings(bool buttonPress, int encoderChange) {
 	static int index = 0;					//holds menu index
 	int dif = (index + encoderChange);		//get number of encoder turns
+	
 	if (buttonPress == false) {
-		if (dif >= 0 && dif <= 2)			//do not let index variable exceed number of states
+		if (dif >= 0 && dif <= 4)			//do not let index variable exceed number of states
 			index = dif;					//map 'mode' variable to states
 
 		// /*	//Display
 		switch (index)
 		{
 		case 0:
-			Serial.println("Bluetooth\r");
+			Serial.println("Connect\r");
 			break;
 		case 1:
-			Serial.println("Clear Profile");
+			Serial.println("Try Again");
 			break;
 		case 2:
+			Serial.println("Yes\r");
+			break;
+		case 3:
+			Serial.println("No\r");
+			break;
+		case 4:
 			Serial.println("Go Back\r");
 			break;
 		}
@@ -224,33 +238,27 @@ void _settings(bool buttonPress, int encoderChange) {
 		case 2:
 			switchState(laststate);
 			break;
+		case 3:
+			switchState(laststate);
+			break;
+		case 4:
+			switchState(laststate);
+			break;
 		}
 	}
+	if(canDraw==true) updateSettings(index);
 }
 
 void _personalRecords(bool buttonPress, int encoderChange) {
 	static int index = 0;					//holds menu index
 	int dif = (index + encoderChange);		//get number of encoder turns
 	if (buttonPress == false) {
-		if (dif >= 0 && dif <= 3)			//do not let index variable exceed number of states
+		if (dif >= 0 && dif < ex_disps.ex_size)			//do not let index variable exceed number of states
 			index = dif;					//map 'mode' variable to states
 
-											// /*	//Display
-		switch (index)
-		{
-		case 0:
-			Serial.println("Curls\r");
-			break;
-		case 1:
-			Serial.println("Benchpress\r");
-			break;
-		case 2:
-			Serial.println("Squats\r");
-			break;
-		case 3:
-			Serial.println("Go Back\r");
-			break;
-		}
+
+	// /*	//Display
+		Serial.println(ex_disps.ex_strings[index]);
 		// */
 	}
 	else {

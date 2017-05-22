@@ -24,8 +24,10 @@
 */
 //SYSTEM VARIABLES
 #define INITIALIZED_ADDR  0	//(8 bit)
-#define WEIGHT_ADDR       2	//(16 bit)
-#define LASTEXERCISE_ADDR 4 //(8 bit)
+#define LASTEXERCISE_ADDR 2 //(8 bit)
+#define WEIGHT_CURLS_ADDR       4	//(16 bit)
+#define WEIGHT_BENCHPRESS_ADDR  6	//(16 bit)
+#define WEIGHT_SQUATS_ADDR      8	//(16 bit)
 //CURL STATS
 #define CURLS_BASEMEM 64	//base memory address for curl data
 #define CAT_ADDR (CURLS_BASEMEM)	//curls average time
@@ -58,10 +60,10 @@
 #define MAX_ALLOWABLE_WEIGHT 500
 
 #define BTNDELAYMS 35
-#define ENCDELAYMS 6
+#define ENCDELAYMS 7
 
 #define DEBUG_A false
-#define DEBUG_H true
+#define DEBUG_H false
 #define DEBUG_T false
 
 /*
@@ -70,26 +72,41 @@
 #define TFT_CS    53 //uno8
 #define TFT_RST   45 //uno9  
 #define TFT_DC     47//uno10
-
+#define REFRESH	  100
 enum states
 {
+
 	//menus
+
 	mainMenu,
-		personalRecords,	//tbd
-		wod,
-		settings,
+	personalRecords,	//tbd
+	wod,
+	settings,
 
 	chooseWeight,
 	warmup,
+	cooldown,
 
-	//exercises
 	curls,
 	benchpress,
 	squats,
 	overhead,
-	deadlift,
+	deadlift
+};
+//exercises
+/*
+enum exercises {
+	curls,
+	benchpress,
+	squats,
+	overhead,
+	deadlift
+};
+*/
 
-	cooldown,
+struct exercise_strings {
+	static const int ex_size = 4;
+	char* ex_strings[ex_size] = {"Curls", "Benchpress", "Squats", "Go Back"};
 };
 
 
