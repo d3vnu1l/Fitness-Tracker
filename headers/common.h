@@ -55,13 +55,14 @@
 /*
 	BENCHPRESS PARAMETERS
 */
-#define BENCHPRESS_MIN 120
+#define BENCHPRESS_MIN 200
 
 #define MAX_ALLOWABLE_WEIGHT 500
 
 #define BTNDELAYMS 35
-#define ENCDELAYMS 7
+#define ENCDELAYMS 5
 
+#define UART_ON true
 #define DEBUG_A false
 #define DEBUG_H false
 #define DEBUG_T false
@@ -72,7 +73,7 @@
 #define TFT_CS    53 //uno8
 #define TFT_RST   45 //uno9  
 #define TFT_DC     47//uno10
-#define REFRESH	  100
+#define REFRESH	  0
 enum states
 {
 

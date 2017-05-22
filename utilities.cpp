@@ -13,8 +13,11 @@ int encoderPressed() {
 	static int lastpress = millis();
 	static int encoder0PinALast = LOW;
 
-	if ((millis() - lastpress) < ENCDELAYMS)
+	if ((millis() - lastpress) < ENCDELAYMS) {
+		//encoder0PinALast = digitalRead(ENCODERPINA);
 		return 0;
+	}
+
 	else {
 		int n = digitalRead(ENCODERPINA);
 		if ((encoder0PinALast == LOW) && (n == HIGH)) {

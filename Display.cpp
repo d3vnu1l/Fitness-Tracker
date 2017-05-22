@@ -7,6 +7,7 @@
 #include <Fonts/FreeSerif9pt7b.h> //Each filename starts with the face name (“FreeMono”, “FreeSerif”, etc.) followed by the style (“Bold”, “Oblique”, none, etc.), font size in points (currently 9, 12, 18 and 24 point sizes are provided) and “7b” to indicate that these contain 7-bit characters (ASCII codes “ ” through “~”); 8-bit fonts (supporting symbols and/or international characters) are not yet provided but may come later.
 #include "resources\bitmaps.h"
 #include <avr/pgmspace.h>
+#include "headers\dmp.h"
 
 
 
@@ -38,6 +39,8 @@ const PROGMEM String CLD = "CLEAR DATA";
 const PROGMEM String GB = "GO BACK";
 const PROGMEM String GO = "GO!";
 const PROGMEM String RE = "REST";
+const PROGMEM String WRK = "WORKOUT";
+const PROGMEM String PRG = "PROGRESS";
 
 const String cu = "CURLS";
 const String sq = "SQUATS";
@@ -47,11 +50,11 @@ const String bench = "BENCH";
 const String over = "OVERHEAD";
 const String mr = "MAXREP";
 
-const  int settings_locations[][2] = { { 16, 58 },{ 64, 58 },{ 48, 88 },{ 70, 88 },{ 44, 108 } };
-const  String settings_redrawables[] = { CO, TA, Y, N, GB };
+static int settings_locations[][2] = { { 16, 58 },{ 64, 58 },{ 48, 88 },{ 70, 88 },{ 44, 108 } };
+static String settings_redrawables[] = { CO, TA, Y, N, GB };
 
-const int mm_locations[][2] = { { 25, 46 },{ 18, 68 },{ 18, 92 } };
-const String mm_redrawables[] = { "WORKOUT", "PROGRESS", "SETTINGS"};
+static int mm_locations[][2] = { { 25, 46 },{ 18, 68 },{ 18, 92 } };
+static String mm_redrawables[] = { WRK, PRG, SETT};
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 
@@ -109,6 +112,7 @@ void drawScreen(int reps) {
 		switch (state) {
 		case mainMenu:
 			updateMainMenu(reps);
+			break;
 		case wod:
 			updateSettings(reps);
 			break;
@@ -165,16 +169,19 @@ void initBenchpress(void)
 }
 
 void updateMainMenu(int place) {
-	static int place_l = -1;
-	tft.setTextSize(1);
-
+	static int place_l = place;
+	tft.setTextSize(2);
+	resetF();
+	/*
 	if (place_l == -1) {
 		tft.setTextColor(BLUE);
 		tft.setCursor(mm_locations[place][0], mm_locations[place][1]);
 		tft.print(mm_redrawables[place]);
 		place_l = place;
 	}
-	else if (place != place_l) {
+	*/
+
+	if (place_l!=place) {
 		tft.setTextColor(BLUE);
 		tft.setCursor(mm_locations[place][0], mm_locations[place][1]);
 		tft.print(mm_redrawables[place]);
@@ -182,8 +189,14 @@ void updateMainMenu(int place) {
 		tft.setTextColor(WHITE);
 		tft.setCursor(mm_locations[place_l][0], mm_locations[place_l][1]);
 		tft.print(mm_redrawables[place_l]);
-		place_l = place;
 	}
+	else {
+		tft.setTextColor(BLUE);
+		tft.setCursor(mm_locations[place][0], mm_locations[place][1]);
+		tft.print(mm_redrawables[place]);
+	}
+	place_l = place;
+	enableF();
 
 }
 
@@ -198,7 +211,6 @@ void initMainMenu(void)
 	tft.setCursor(31, 21);
 	tft.print(mr);
 	tft.drawLine(28, 37, 100, 37, WHITE);
-	tft.setTextColor(BLUE);
 	tft.setCursor(25, 46);
 	tft.print("WORKOUT");
 }
@@ -348,15 +360,12 @@ void initSettings(void) {
 
 void updateSettings(int place)
 {
-	static int place_l = -1;
+	resetF();
+	static int place_l = place;
 	tft.setTextSize(1);
 
-	if (place_l == -1) {
-		tft.setTextColor(BLUE);
-		tft.setCursor(settings_locations[place][0], settings_locations[place][1]);
-		tft.print(settings_redrawables[place]);
-	}
-	else if (place != place_l) {
+	
+	if (place != place_l) {
 		tft.setTextColor(BLUE);
 		tft.setCursor(settings_locations[place][0], settings_locations[place][1]);
 		tft.print(settings_redrawables[place]);
@@ -365,8 +374,14 @@ void updateSettings(int place)
 		tft.setCursor(settings_locations[place_l][0], settings_locations[place_l][1]);
 		tft.print(settings_redrawables[place_l]);
 	}
+	else{
+		tft.setTextColor(BLUE);
+		tft.setCursor(settings_locations[place][0], settings_locations[place][1]);
+		tft.print(settings_redrawables[place]);
+	}
 
 	place_l = place;
+	enableF();
 }
 
 void updateBT(void) {

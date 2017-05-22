@@ -50,7 +50,7 @@ void _mainMenu(bool buttonPress, int encoderChange) {
 			break;
 		}
 	}
-	if (canDraw == true) drawScreen(index);
+	if (canDraw == true) updateMainMenu(index);
 }
 
 void _wod(bool buttonState, int encoderChange) {

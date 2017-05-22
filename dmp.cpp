@@ -120,5 +120,11 @@ void dmp_sample(int buf_YPR[][BUFFER_SIZE], int buf_WORLDACCEL[][BUFFER_SIZE], u
 
 }
 
+void resetF(void) {
+	mpu.setDMPEnabled(false);
+}
 
+void enableF(void) {
+	mpu.setDMPEnabled(true);
+}
 

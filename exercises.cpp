@@ -136,7 +136,7 @@ void _curls(int buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE]
 
 }
 
-void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, int reps) {
+void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, unsigned int data_ptr, int reps) {
 	static int numreps = -1;	//*				//number of reps, set to -1 before exercise is started
 	//height tracking vars
 	static int velocity[3][BUFFER_SIZE];
@@ -284,7 +284,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr
 		}
 		if (canDraw == true) drawScreen(numreps);
 	}
-	if (numreps == reps) {
+	if (numreps == reps || buttonState==true) {
 		//compute averages
 		float avEffort, avSym;
 		int avTime;

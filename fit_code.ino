@@ -48,7 +48,9 @@ void setup() {
 
   if (EEPROM.read(INITIALIZED_ADDR) == 0) resetMemory();				//configures memory if first time use
   initBuffers(buf_YPR, buf_WORLDACCEL, buf_smooth_WORLDACCEL);
-  Serial.begin(115200); while (!Serial);
+  if (UART_ON == true) {
+	  Serial.begin(115200); while (!Serial);
+  }
   dmp_init();
   time = millis();
   display_tick = millis();
@@ -109,7 +111,7 @@ void loop() {
         _curls(buf_YPR, buf_smooth_WORLDACCEL, data_ptr, buttonPress, 20);
       }
       else if (state == benchpress) {
-        _benchpress(buf_smooth_WORLDACCEL, data_ptr, 10);
+        _benchpress(buf_smooth_WORLDACCEL, buttonPress, data_ptr, 10);
       }
       else if (state == squats) {
         _squats(buf_smooth_WORLDACCEL, data_ptr, 5);
@@ -144,10 +146,10 @@ void loop() {
 
   //display
   if (state_l != state) {
-    noInterrupts();
+	resetF();
     initScreen();
-    interrupts();
-    dmp_init();
+	enableF();
+
   }
 
   //3. flag that new data is available//

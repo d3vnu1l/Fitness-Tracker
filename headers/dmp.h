@@ -5,6 +5,9 @@
 void dmp_init(void);
 void dmp_sample(int [][BUFFER_SIZE], int [][BUFFER_SIZE], unsigned int &);
 
+void resetF(void);
+void enableF(void);
+
 #endif  /* DMP_H */
 
 
