@@ -69,6 +69,7 @@ void _wod(bool buttonState, int encoderChange) {
 			switchState(laststate);
 		else switchState(chooseWeight);
 	}
+	drawScreen(nextWorkout);
 }
 
 void _chooseWeight(bool buttonState, int encoderChange) {

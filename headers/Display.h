@@ -10,10 +10,12 @@ void initCurls(void);
 void initBenchpress(void);
 void initSquats(void);
 
+void initWOD(void);
 void initMainMenu(void);
 
 void updateExercise(int);
 void updateMainMenu(int);
+void updateWOD(int);
 
 
 

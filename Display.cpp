@@ -47,6 +47,7 @@ const String sq = "SQUATS";
 const String dl = "DEADLIFTS";
 const String ro = "ROWS";
 const String bench = "BENCH";
+const String benchp = "BENCHPRESS";
 const String over = "OVERHEAD";
 const String mr = "MAXREP";
 
@@ -55,6 +56,9 @@ static String settings_redrawables[] = { CO, TA, Y, N, GB };
 
 static int mm_locations[][2] = { { 25, 46 },{ 18, 68 },{ 18, 92 } };
 static String mm_redrawables[] = { WRK, PRG, SETT};
+
+static int wod_locations[][2] = { {35,46},{5,68},{30,89}, {44,111} };
+static String wod_redrawables[] = { cu,benchp,sq, GB};
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 
@@ -93,7 +97,7 @@ void initScreen(void) {
 			initSettings();
 			break;
 		case wod:
-			//initWod();
+			initWOD();
 			break;
 		case curls:
 			initCurls();
@@ -114,7 +118,7 @@ void drawScreen(int reps) {
 			updateMainMenu(reps);
 			break;
 		case wod:
-			updateSettings(reps);
+			updateWOD(reps);
 			break;
 		case curls:
 			updateExercise(reps);
@@ -172,14 +176,6 @@ void updateMainMenu(int place) {
 	static int place_l = place;
 	tft.setTextSize(2);
 	resetF();
-	/*
-	if (place_l == -1) {
-		tft.setTextColor(BLUE);
-		tft.setCursor(mm_locations[place][0], mm_locations[place][1]);
-		tft.print(mm_redrawables[place]);
-		place_l = place;
-	}
-	*/
 
 	if (place_l!=place) {
 		tft.setTextColor(BLUE);
@@ -215,6 +211,50 @@ void initMainMenu(void)
 	tft.print("WORKOUT");
 }
 
+void initWOD(void)
+{
+	tft.setTextSize(2);
+	tft.setTextColor(WHITE);
+	tft.setCursor(30, 89);
+	tft.print("SQUATS");
+	tft.setCursor(5, 68);
+	tft.print("BENCHPRESS");
+	tft.setCursor(31, 21);
+	tft.print(mr);
+	tft.drawLine(28, 37, 100, 37, WHITE);
+	tft.setCursor(35, 46);
+	tft.print("CURLS");
+
+	tft.setTextSize(1);
+	tft.setCursor(44, 111);
+	tft.print("GO BACK");
+}
+
+void updateWOD(int place) {
+	resetF();
+	static int place_l = place;
+	tft.setTextSize(2);
+
+
+	if (place != place_l) {
+		tft.setTextColor(BLUE);
+		tft.setCursor(wod_locations[place][0], wod_locations[place][1]);
+		tft.print(wod_redrawables[place]);
+
+		tft.setTextColor(WHITE);
+		tft.setCursor(wod_locations[place_l][0], wod_locations[place_l][1]);
+		tft.print(wod_redrawables[place_l]);
+	}
+	else {
+		tft.setTextColor(BLUE);
+		tft.setCursor(wod_locations[place][0], wod_locations[place][1]);
+		tft.print(wod_redrawables[place]);
+	}
+
+	place_l = place;
+	enableF();
+}
+
 void updateExercise(int reps) {
 	static int rep_last = 0;
 	if (reps != rep_last) {
@@ -228,103 +268,6 @@ void updateExercise(int reps) {
 		tft.print(reps);
 	}
 }
-
-/*
-void drawDeadliftGO(int encPos)
-{
-
-	// M & R
-
-	switch (reps)
-	{
-	case 0:
-		tft.setTextSize(2);
-		tft.setCursor(13, 34);
-		tft.print(dl);
-
-		tft.setTextSize(2);
-		tft.setCursor(59, 84);
-		tft.print(no);
-		tft.drawBitmap(16, 58, GO, 48, 24, BLUE);
-		tft.drawBitmap(60, 58, RT, 60, 24, WHITE);
-		tft.drawBitmap(37, 100, GB, 60, 24, WHITE);
-		break;
-
-	case 1:
-		tft.setTextSize(2);
-		tft.setCursor(13, 34);
-		tft.print(dl);
-
-		tft.setTextSize(2);
-		tft.setCursor(59, 84);
-		tft.print(no);
-		tft.drawBitmap(16, 58, GO, 48, 24, WHITE);
-		tft.drawBitmap(60, 58, RT, 60, 24, BLUE);
-		tft.drawBitmap(37, 100, GB, 60, 24, WHITE);
-		break;
-	case 2:
-		tft.setTextSize(2);
-		tft.setCursor(13, 34);
-		tft.print(dl);
-
-		tft.setTextSize(2);
-		tft.setCursor(59, 84);
-		tft.print(no);
-		tft.drawBitmap(16, 58, GO, 48, 24, WHITE);
-		tft.drawBitmap(60, 58, RT, 60, 24, WHITE);
-		tft.drawBitmap(37, 100, GB, 60, 24, BLUE);
-		break;
-	}
-
-}
-*/
-
-/*
-void drawBrGO(int encPos) {
-
-	switch (reps)
-	{
-	case 0:
-		tft.setTextSize(2);
-		tft.setCursor(48, 34);
-		tft.print(ro);
-
-		tft.setTextSize(2);
-		tft.setCursor(59, 84);
-		tft.print(no);
-		tft.drawBitmap(16, 58, GO, 48, 24, BLUE);
-		tft.drawBitmap(60, 58, RT, 60, 24, WHITE);
-		tft.drawBitmap(37, 100, GB, 60, 24, WHITE);
-		break;
-
-	case 1:
-		tft.setTextSize(2);
-		tft.setCursor(48, 34);
-		tft.print(ro);
-
-		tft.setTextSize(2);
-		tft.setCursor(59, 84);
-		tft.print(no);
-		tft.drawBitmap(16, 58, GO, 48, 24, WHITE);
-		tft.drawBitmap(60, 58, RT, 60, 24, BLUE);
-		tft.drawBitmap(37, 100, GB, 60, 24, WHITE);
-		break;
-	case 2:
-		tft.setTextSize(2);
-		tft.setCursor(48, 34);
-		tft.print(ro);
-
-		tft.setTextSize(2);
-		tft.setCursor(59, 84);
-		tft.print(no);
-		tft.drawBitmap(16, 58, GO, 48, 24, WHITE);
-		tft.drawBitmap(60, 58, RT, 60, 24, WHITE);
-		tft.drawBitmap(37, 100, GB, 60, 24, BLUE);
-		break;
-	}
-
-}
-*/
 
 void initSettings(void) {
 
