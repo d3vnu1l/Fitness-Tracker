@@ -84,7 +84,9 @@ void loop() {
 
       if (state == mainMenu)                                                                 //start
       {
-        _mainMenu(buttonPress, encoderChange);
+		  resetF();
+        _mainMenu();
+		enableF();
       }
       else if (state == wod)                                                   //chooseexercise
       {

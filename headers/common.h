@@ -60,9 +60,9 @@
 #define MAX_ALLOWABLE_WEIGHT 500
 
 #define BTNDELAYMS 50
-#define ENCDELAYMS 4
+#define ENCDELAYMS 5
 
-#define UART_ON false
+#define UART_ON true
 #define DEBUG_A false
 #define DEBUG_H false
 #define DEBUG_T false

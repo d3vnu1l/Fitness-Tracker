@@ -10,47 +10,53 @@ extern exercise_strings ex_disps;
 extern int nextWorkout;		//holds next workout index, required to set new state after 'warmup'
 extern bool canDraw;
 
-void _mainMenu(bool buttonPress, int encoderChange) {
-	static int index = 0;					//holds menu index
-	int dif = (index + encoderChange);		//get number of encoder turns
-	if (buttonPress == false) {
-		if (dif >= 0 && dif <= 2)			//do not let index variable exceed number of states
-			index = dif;					//map 'mode' variable to states
+void _mainMenu() {
+	bool escape = false;
+	while (escape == false) {
+		int encoderChange = encoderPressed();
+		int buttonPress = buttonPressed();
+		static int index = 0;					//holds menu index
+		int dif = (index + encoderChange);		//get number of encoder turns
+		if (buttonPress == false) {
+			if (dif >= 0 && dif <= 2)			//do not let index variable exceed number of states
+				index = dif;					//map 'mode' variable to states
 
 
-		//Display
-		if (DEBUG_A == true || DEBUG_H == true);
-		else{
+			//Display
+			if (DEBUG_A == true || DEBUG_H == true);
+			else {
+				switch (index)
+				{
+				case 0:
+					Serial.println("W.O.D.\r");
+					break;
+				case 1:
+					Serial.println("P/R\r");
+					break;
+				case 2:
+					Serial.println("Settings\r");
+					break;
+				}
+			}
+
+		}
+		else {
 			switch (index)
 			{
 			case 0:
-				Serial.println("W.O.D.\r");
+				switchState(wod);
 				break;
 			case 1:
-				Serial.println("P/R\r");
+				switchState(personalRecords);
 				break;
 			case 2:
-				Serial.println("Settings\r");
+				switchState(settings);
 				break;
 			}
-	}
-		
-	}
-	else {
-		switch (index)
-		{
-		case 0:
-			switchState(wod);
-			break;
-		case 1:
-			switchState(personalRecords);
-			break;
-		case 2:
-			switchState(settings);
-			break;
+			escape = true;
 		}
+		updateMainMenu(index);
 	}
-	if (canDraw == true) updateMainMenu(index);
 }
 
 void _wod(bool buttonState, int encoderChange) {

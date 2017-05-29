@@ -175,8 +175,6 @@ void initBenchpress(void)
 void updateMainMenu(int place) {
 	static int place_l = place;
 	tft.setTextSize(2);
-	resetF();
-
 	if (place_l!=place) {
 		tft.setTextColor(BLUE);
 		tft.setCursor(mm_locations[place][0], mm_locations[place][1]);
@@ -192,8 +190,6 @@ void updateMainMenu(int place) {
 		tft.print(mm_redrawables[place]);
 	}
 	place_l = place;
-	enableF();
-
 }
 
 void initMainMenu(void)
