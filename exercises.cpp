@@ -186,14 +186,15 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 
 
 		if ((h_max-h_min) > BENCHPRESS_MIN && vlast > 0 && vnow < 0) {	//ERROR RESET 
-			Serial.print("Height ");
-			Serial.print(h_max-h_min);
+			//Serial.print("Height ");
+			//Serial.print(h_max-h_min);
 
 			unsigned int time_passed = millis() - timer;
 			timer = millis();
 			float _effort = (abs(acceleration_accum_up) / (1.0*time_passed));
 			height = 0;
 			h_max = 0;
+			h_min = 0;
 			vnow = 0;
 			vlast = 0;
 
@@ -206,7 +207,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 
 				numreps++;
 
-				if (DEBUG_H == true) Serial.println("   rep***************");
+				if (DEBUG_H == true);
 				else {
 					Serial.print("	reps: ");
 					Serial.print(numreps);
@@ -230,11 +231,11 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 		vlast = vnow;
 
 		//set max/min
-		if (abs(height) >= h_max) h_max = abs(height);
-		//if (height <= h_min) h_min = height;
+		if (height >= h_max) h_max = height;
+		if (height <= h_min) h_min = height;
 
 		//get information about type of movement using stored accelo data
-		deadstill = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 18, 5);
+		deadstill = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 15, 6);
 		//still = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 3, 10);
 		if (dir == 200) {
 			if (buf_smooth_WORLDACCEL[2][data_ptr] > 20)
@@ -253,7 +254,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 
 		//reset height tracking when device is on the ground
 		if (deadstill == 1) {
-			Serial.print("reset still");
+			//Serial.print("reset still");
 			height = 0;
 			vlast = 0;
 			vnow = 0;

@@ -72,5 +72,7 @@ int readInt(int address) {
 void resetMemory(void) {
 	EEPROM.write(INITIALIZED_ADDR, 0xFF);		//set device as configured
 	updateInt(WEIGHT_CURLS_ADDR, 150);				//default weight size is 150
+	updateInt(WEIGHT_BENCHPRESS_ADDR, 150);				//default weight size is 150
+	updateInt(WEIGHT_SQUATS_ADDR, 150);				//default weight size is 150
 
 }

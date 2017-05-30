@@ -3,7 +3,7 @@
 /*
 	Hardware assignments
 */
-#define ENCODERPINA 50
+#define ENCODERPINA 3
 #define ENCODERPINB 48
 #define BUTTONPIN 46
 #define INTERRUPT_PIN 2	
@@ -55,16 +55,16 @@
 /*
 	BENCHPRESS PARAMETERS
 */
-#define BENCHPRESS_MIN 200
+#define BENCHPRESS_MIN 120
 
 #define MAX_ALLOWABLE_WEIGHT 500
 
-#define BTNDELAYMS 50
+#define BTNDELAYMS 100
 #define ENCDELAYMS 5
 
 #define UART_ON true
 #define DEBUG_A false
-#define DEBUG_H false
+#define DEBUG_H true
 #define DEBUG_T false
 
 /*

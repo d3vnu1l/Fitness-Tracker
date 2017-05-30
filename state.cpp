@@ -19,7 +19,7 @@ void _mainMenu() {
 		int dif = (index + encoderChange);		//get number of encoder turns
 		if (buttonPress == false) {
 			if (dif >= 0 && dif <= 2)			//do not let index variable exceed number of states
-				index = dif;					//map 'mode' variable to states
+				index = dif;					//map 'index' variable to states
 
 
 			//Display
@@ -63,7 +63,7 @@ void _wod(bool buttonState, int encoderChange) {
 	int dif = (nextWorkout + encoderChange);
 	if (buttonState == false) {
 		if (dif >= 0 && dif < ex_disps.ex_size)
-			nextWorkout = dif;					//map 'mode' variable to states
+			nextWorkout = dif;					//map 'index' variable to states
 
 		// /*	//Display
 		Serial.println(ex_disps.ex_strings[nextWorkout]);
@@ -84,14 +84,14 @@ void _chooseWeight(bool buttonState, int encoderChange) {
 	int dif;
 
 	//FETCH LAST USED WEIGHT
-	static int weight=-1;
-	if (weight == -1) {
+	static int weight=MAX_ALLOWABLE_WEIGHT+1;
+	if (weight == MAX_ALLOWABLE_WEIGHT + 1) {
 		weight = 0;
 		if (nextWorkout == 0)
 			weight = readInt(WEIGHT_CURLS_ADDR);			//fetch weight from eeprom
-		else if (nextWorkout == benchpress)
-			weight = readInt(WEIGHT_BENCHPRESS_ADDR);			//fetch weight from eeprom
-		else if (nextWorkout == squats)
+		else if (nextWorkout == 1)
+			weight = readInt(WEIGHT_BENCHPRESS_ADDR);		//fetch weight from eeprom
+		else if (nextWorkout == 2)
 			weight = readInt(WEIGHT_SQUATS_ADDR);			//fetch weight from eeprom
 	}
 
@@ -135,11 +135,11 @@ void _chooseWeight(bool buttonState, int encoderChange) {
 			weightIsSet = false;								//reset ready var
 			index = 0;											//reset index memory (do not retain cursor position)
 			//UPDATE MEMORY EEPROM
-			if (nextWorkout == curls)
+			if (nextWorkout == 0)
 				writeInt(WEIGHT_CURLS_ADDR, weight);			//update weight from eeprom
-			else if (nextWorkout == benchpress)
+			else if (nextWorkout == 1)
 				writeInt(WEIGHT_BENCHPRESS_ADDR, weight);			//update weight from eeprom
-			else if (nextWorkout == squats)
+			else if (nextWorkout == 2)
 				writeInt(WEIGHT_SQUATS_ADDR, weight);			//update weight from eeprom
 			switchState(warmup);
 			break;
@@ -147,6 +147,7 @@ void _chooseWeight(bool buttonState, int encoderChange) {
 			weightIsSet = false;								//reset ready var
 			index = 0;											//reset index memory (do not retain cursor position)
 			switchState(laststate);
+			weight = MAX_ALLOWABLE_WEIGHT + 1;
 			break;
 		}
 	}
@@ -239,11 +240,12 @@ void _settings(bool buttonPress, int encoderChange) {
 			switchState(laststate);
 			break;
 		case 1:
-			resetMemory();
-			switchState(mainMenu);
+			switchState(laststate);
 			break;
 		case 2:
-			switchState(laststate);
+			resetMemory();
+			switchState(mainMenu);
+			//switchState(laststate);
 			break;
 		case 3:
 			switchState(laststate);
