@@ -63,8 +63,8 @@
 #define ENCDELAYMS 5
 
 #define UART_ON true
-#define DEBUG_A false
-#define DEBUG_H true
+#define DEBUG_A true
+#define DEBUG_H false
 #define DEBUG_T false
 
 /*

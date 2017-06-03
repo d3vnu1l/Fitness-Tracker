@@ -80,13 +80,11 @@ void loop() {
 
     if (processedData == false) {
       //kill cycles to emulate 8mhz operation
-      for (int k = 0; k < 20000; k++) _NOP();	//cycle waste to emulate 8mhz
+      for (int k = 0; k < 10000; k++) _NOP();	//cycle waste to emulate 8mhz
 
       if (state == mainMenu)                                                                 //start
       {
-		  resetF();
-        _mainMenu();
-		enableF();
+        _mainMenu(buttonPress, encoderChange);
       }
       else if (state == wod)                                                   //chooseexercise
       {

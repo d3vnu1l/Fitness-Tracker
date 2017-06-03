@@ -10,53 +10,47 @@ extern exercise_strings ex_disps;
 extern int nextWorkout;		//holds next workout index, required to set new state after 'warmup'
 extern bool canDraw;
 
-void _mainMenu() {
-	bool escape = false;
-	while (escape == false) {
-		int encoderChange = encoderPressed();
-		int buttonPress = buttonPressed();
-		static int index = 0;					//holds menu index
-		int dif = (index + encoderChange);		//get number of encoder turns
-		if (buttonPress == false) {
-			if (dif >= 0 && dif <= 2)			//do not let index variable exceed number of states
-				index = dif;					//map 'index' variable to states
+void _mainMenu(bool buttonPress, int encoderChange) {
+	static int index = 0;          //holds menu index 
+	int dif = (index + encoderChange);    //get number of encoder turns 
+	if (buttonPress == false) {
+		if (dif >= 0 && dif <= 2)      //do not let index variable exceed number of states 
+			index = dif;          //map 'mode' variable to states 
 
 
 			//Display
-			if (DEBUG_A == true || DEBUG_H == true);
-			else {
-				switch (index)
-				{
-				case 0:
-					Serial.println("W.O.D.\r");
-					break;
-				case 1:
-					Serial.println("P/R\r");
-					break;
-				case 2:
-					Serial.println("Settings\r");
-					break;
-				}
-			}
-
-		}
+		if (DEBUG_A == true || DEBUG_H == true);
 		else {
 			switch (index)
 			{
 			case 0:
-				switchState(wod);
+				Serial.println("W.O.D.\r");
 				break;
 			case 1:
-				switchState(personalRecords);
+				Serial.println("P/R\r");
 				break;
 			case 2:
-				switchState(settings);
+				Serial.println("Settings\r");
 				break;
 			}
-			escape = true;
 		}
-		updateMainMenu(index);
+
 	}
+	else {
+		switch (index)
+		{
+		case 0:
+			switchState(wod);
+			break;
+		case 1:
+			switchState(personalRecords);
+			break;
+		case 2:
+			switchState(settings);
+			break;
+		}
+	}
+	if (canDraw==true) updateMainMenu(index);
 }
 
 void _wod(bool buttonState, int encoderChange) {
@@ -66,16 +60,17 @@ void _wod(bool buttonState, int encoderChange) {
 			nextWorkout = dif;					//map 'index' variable to states
 
 		// /*	//Display
-		Serial.println(ex_disps.ex_strings[nextWorkout]);
+		if (DEBUG_A == false)
+			Serial.println(ex_disps.ex_strings[nextWorkout]);
 		// */
 	}
 	else {
 		//write finalized value
-		if (nextWorkout == (ex_disps.ex_size-1))
+		if (nextWorkout == (ex_disps.ex_size - 1))
 			switchState(laststate);
 		else switchState(chooseWeight);
 	}
-	drawScreen(nextWorkout);
+	if(canDraw==true) drawScreen(nextWorkout);
 }
 
 void _chooseWeight(bool buttonState, int encoderChange) {
@@ -84,7 +79,7 @@ void _chooseWeight(bool buttonState, int encoderChange) {
 	int dif;
 
 	//FETCH LAST USED WEIGHT
-	static int weight=MAX_ALLOWABLE_WEIGHT+1;
+	static int weight = MAX_ALLOWABLE_WEIGHT + 1;
 	if (weight == MAX_ALLOWABLE_WEIGHT + 1) {
 		weight = 0;
 		if (nextWorkout == 0)
@@ -105,7 +100,7 @@ void _chooseWeight(bool buttonState, int encoderChange) {
 		Serial.print("Weight is ");
 		Serial.println(weight);
 	}
-	else if (weightIsSet == false && buttonState == true){
+	else if (weightIsSet == false && buttonState == true) {
 		weightIsSet = true;
 	}
 
@@ -185,7 +180,7 @@ void _cooldown() {
 		counting = true;
 	}
 	if (counting == true) {
-		if (elapsed%1000==0) Serial.println(elapsed / 1000);
+		if (elapsed % 1000 == 0) Serial.println(elapsed / 1000);
 		elapsed = millis() - start;
 		if ((elapsed / 1000) >= COOLDOWN) {
 			counting = false;
@@ -207,7 +202,7 @@ void _cooldown() {
 void _settings(bool buttonPress, int encoderChange) {
 	static int index = 0;					//holds menu index
 	int dif = (index + encoderChange);		//get number of encoder turns
-	
+
 	if (buttonPress == false) {
 		if (dif >= 0 && dif <= 4)			//do not let index variable exceed number of states
 			index = dif;					//map 'mode' variable to states
@@ -255,7 +250,7 @@ void _settings(bool buttonPress, int encoderChange) {
 			break;
 		}
 	}
-	if(canDraw==true) updateSettings(index);
+	if (canDraw == true) updateSettings(index);
 }
 
 void _personalRecords(bool buttonPress, int encoderChange) {

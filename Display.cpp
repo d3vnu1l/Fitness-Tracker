@@ -173,6 +173,7 @@ void initBenchpress(void)
 }
 
 void updateMainMenu(int place) {
+	resetF();
 	static int place_l = place;
 	tft.setTextSize(2);
 	if (place_l!=place) {
@@ -190,6 +191,7 @@ void updateMainMenu(int place) {
 		tft.print(mm_redrawables[place]);
 	}
 	place_l = place;
+	enableF();
 }
 
 void initMainMenu(void)
