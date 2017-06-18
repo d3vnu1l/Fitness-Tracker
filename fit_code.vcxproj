@@ -90,6 +90,7 @@
     <ClInclude Include="headers\state.h" />
     <ClInclude Include="headers\utilities.h" />
     <ClInclude Include="resources\bitmaps.h" />
+    <ClInclude Include="statBlock.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="blueTooth.cpp" />

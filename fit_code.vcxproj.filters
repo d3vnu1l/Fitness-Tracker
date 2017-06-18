@@ -48,6 +48,9 @@
     <ClInclude Include="resources\bitmaps.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
+    <ClInclude Include="statBlock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="blueTooth.cpp">

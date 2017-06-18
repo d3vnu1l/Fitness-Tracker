@@ -1,5 +1,6 @@
 #include "headers\common.h"
 #include "Arduino.h"
+#include "statBlock.h"
 #include "headers\utilities.h"
 #include "EEPROM.h"
 #include "headers\Display.h"
@@ -200,8 +201,8 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 
 			if (_effort > 1) {
 				time[numreps] = time_passed;
-				Serial.print(" , ");
-				Serial.print(_effort);
+				//Serial.print(" , ");
+				//Serial.print(_effort);
 				effort[numreps] = _effort;
 				symmetry[numreps] = (1.0*acceleration_accum_down / acceleration_accum_up);
 
@@ -271,7 +272,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 			//for debugging
 			//Serial.print(" dir: ");
 			Serial.print(dir);
-			Serial.print(" , ");
+			Serial.print(", ");
 			//Serial.print("reps completed: "); Serial.println(numreps);
 			Serial.print(height);
 			Serial.print(", ");
@@ -294,10 +295,20 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 			avTime += time[i];
 			avSym += symmetry[i];
 		}
+		avEffort = avEffort / numreps;
+		avTime = (1.0*avTime / numreps) / 1000;
+		//create stat block and send to memory
+		statBlock newSet;
+		newSet.reps = numreps;
+		newSet.type = "";
+		newSet.wrkt = "";
+		newSet.avgTime = avTime;
+		newSet.avgEffort = avEffort;
+
 		Serial.print("Effort: ");
-		Serial.print(avEffort / numreps);
+		Serial.print(avEffort);
 		Serial.print(", Time:");
-		Serial.print((1.0*avTime / numreps) / 1000);
+		Serial.print(avTime);
 		Serial.print(", Sym:");
 		Serial.println(avSym / numreps);
 		numreps = -1;

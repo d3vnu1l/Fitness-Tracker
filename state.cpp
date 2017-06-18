@@ -11,6 +11,7 @@ extern int nextWorkout;		//holds next workout index, required to set new state a
 extern bool canDraw;
 
 void _mainMenu(bool buttonPress, int encoderChange) {
+	if (DEBUG_H == true) switchState(benchpress);
 	static int index = 0;          //holds menu index 
 	int dif = (index + encoderChange);    //get number of encoder turns 
 	if (buttonPress == false) {
