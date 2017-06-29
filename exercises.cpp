@@ -169,22 +169,25 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 	if (numreps < reps) {
 		//attempt to dampen subtle acceleration effects on velocity
 		int amag = abs(buf_smooth_WORLDACCEL[2][data_ptr]);
-		//if (amag < 5)
-		//	vnow = vlast;
+		if (amag < 5)
+			vnow = vlast;
 		//else calculate new velocity
-		//else
+		else
 			vnow = vlast + (.02*buf_smooth_WORLDACCEL[2][data_ptr]);
 
-		velocity[2][data_ptr] = vnow;
+		//cap velocity, prevent runoff
+		if (vnow > VELOCITY_CAP)
+			vnow = VELOCITY_CAP;
+		else if (vnow < -VELOCITY_CAP)
+			vnow = -VELOCITY_CAP;
 
+		velocity[2][data_ptr] = vnow;
 		iirHPFV(velocity, velocity_hpf, data_ptr, 2);
-		//velocity_hpf[2][data_ptr] = velocity[2][data_ptr];
+		//velocity_hpf[2][data_ptr] = velocity[2][data_ptr];	//bypass HPF for testing
 
 		//calculate new height
 		height = height + (0.02 * velocity_hpf[2][data_ptr]);
-
 		dir = directionDetect(velocity, data_ptr, 0, 18, 1);
-
 
 		if ((h_max-h_min) > BENCHPRESS_MIN && vlast > 0 && vnow < 0) {	//ERROR RESET 
 			//Serial.print("Height ");
@@ -297,6 +300,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 		}
 		avEffort = avEffort / numreps;
 		avTime = (1.0*avTime / numreps) / 1000;
+
 		//create stat block and send to memory
 		statBlock newSet;
 		newSet.reps = numreps;

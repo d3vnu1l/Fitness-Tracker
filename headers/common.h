@@ -28,22 +28,12 @@
 #define WEIGHT_CURLS_ADDR       4	//(16 bit)
 #define WEIGHT_BENCHPRESS_ADDR  6	//(16 bit)
 #define WEIGHT_SQUATS_ADDR      8	//(16 bit)
-//CURL STATS
-#define CURLS_BASEMEM 64	//base memory address for curl data
-#define CAT_ADDR (CURLS_BASEMEM)	//curls average time
-#define CAA_ADDR (CURLS_BASEMEM+2)	//curls average acceleration
-#define CAS_ADDR (CURLS_BASEMEM+4)	//curls average intensity
+#define STAT_POINTER_ADDR	256
+#define APP_POINTER_ADDR	258
+//STATS
+#define STAT_BASEMEM_ADDR 512	//base memory address for curl data
 
-//BENCHPRESS STATS
-#define BENCHPRESS_BASEMEM 64	//base memory address for curl data
-#define BAT_ADDR (BENCHPRESS_BASEMEM)	//curls average time
-#define BAA_ADDR (BENCHPRESS_BASEMEM+2)	//curls average acceleration
-#define BAS_ADDR (BENCHPRESS_BASEMEM+4)	//curls average ecceleration
-//SQUAT STATS
-#define SQUATS_BASEMEM 64	//base memory address for curl data
-#define SAT_ADDR (SQUATS_BASEMEM)	//curls average time
-#define SAA_ADDR (SQUATS_BASEMEM+2)	//curls average acceleration
-#define SAS_ADDR (SQUATS_BASEMEM+4)	//curls average ecceleration
+#define MAXMEM_ADDR	4096
 
 /*
 	CURL PARAMETERS
@@ -56,7 +46,7 @@
 	BENCHPRESS PARAMETERS
 */
 #define BENCHPRESS_MIN 120
-
+#define VELOCITY_CAP 1000
 #define MAX_ALLOWABLE_WEIGHT 500
 
 #define BTNDELAYMS 100
@@ -64,7 +54,7 @@
 
 #define UART_ON true
 #define DEBUG_A false
-#define DEBUG_H true
+#define DEBUG_H false
 #define DEBUG_T false
 
 /*
@@ -76,9 +66,7 @@
 #define REFRESH	  0
 enum states
 {
-
 	//menus
-
 	mainMenu,
 	personalRecords,	//tbd
 	wod,
@@ -94,6 +82,7 @@ enum states
 	overhead,
 	deadlift
 };
+
 //exercises
 /*
 enum exercises {
@@ -104,6 +93,13 @@ enum exercises {
 	deadlift
 };
 */
+
+enum workouts
+{
+	fiveByFive
+};
+
+
 
 struct exercise_strings {
 	static const int ex_size = 4;

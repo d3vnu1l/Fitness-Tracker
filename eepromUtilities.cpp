@@ -4,6 +4,7 @@
 #include "headers\eepromUtilities.h"
 #include "headers\common.h"
 #include "EEPROM.h"
+#include "statBlock.h"
 
 void writeLong(int address, long value) {
 	//Decomposition from a long to 4 bytes by using bitshift.
@@ -68,11 +69,22 @@ int readInt(int address) {
 	return ((two << 0) & 0xFF) + ((one << 8) & 0xFFFF);
 }
 
+boolean storeStatBlock(statBlock newstat) {
+	int addr = readInt(STAT_POINTER_ADDR);
+	if (addr == MAXMEM_ADDR)
+		return false;
+	else {
+
+		return true;
+	}
+}
+
 //This function resets the device EEPROM to factory settings
 void resetMemory(void) {
 	EEPROM.write(INITIALIZED_ADDR, 0xFF);		//set device as configured
 	updateInt(WEIGHT_CURLS_ADDR, 150);				//default weight size is 150
 	updateInt(WEIGHT_BENCHPRESS_ADDR, 150);				//default weight size is 150
 	updateInt(WEIGHT_SQUATS_ADDR, 150);				//default weight size is 150
-
+	writeInt(APP_POINTER_ADDR, STAT_BASEMEM_ADDR);
+	writeInt(STAT_POINTER_ADDR, STAT_BASEMEM_ADDR);
 }

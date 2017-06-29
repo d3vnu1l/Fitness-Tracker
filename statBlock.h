@@ -3,11 +3,14 @@
 
 class statBlock {
 public:
-	String wrkt;
-	String type;
+	//4 char maximum for strings
+	int wrkt;
+	int type;
+	boolean uploaded = false;
 	int reps;
-	double avgTime;   // Length of a box
-	double avgEffort;  // Breadth of a box
+	float avgTime;   // Length of a box
+	float avgEffort;  // Breadth of a box
+	float sym;
 	int weight;   // Height of a box
 };
 
