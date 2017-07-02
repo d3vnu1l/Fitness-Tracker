@@ -1,8 +1,9 @@
 #include "headers\common.h"
 #include "Arduino.h"
-#include "statBlock.h"
+#include "headers\statBlock.h"
 #include "headers\utilities.h"
 #include "EEPROM.h"
+#include "headers\eepromUtilities.h"
 #include "headers\Display.h"
 
 extern int state, laststate;
@@ -303,18 +304,22 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 
 		//create stat block and send to memory
 		statBlock newSet;
+		newSet.uploaded = -1;
 		newSet.reps = numreps;
-		newSet.type = "";
-		newSet.wrkt = "";
+		newSet.type = benchpress;
+		newSet.wrkt = fiveByFive;
 		newSet.avgTime = avTime;
 		newSet.avgEffort = avEffort;
-
+		newSet.avgSym = avSym;
 		Serial.print("Effort: ");
 		Serial.print(avEffort);
 		Serial.print(", Time:");
 		Serial.print(avTime);
 		Serial.print(", Sym:");
 		Serial.println(avSym / numreps);
+
+		Serial.println("just gonnna send it");
+		storeStatBlock(newSet);
 		numreps = -1;
 		switchState(cooldown);
 	}

@@ -45,7 +45,6 @@ void setup() {
   pinMode(BUTTONPIN, INPUT);
 
   setupScreen();
-
   if (EEPROM.read(INITIALIZED_ADDR) == 0) resetMemory();				//configures memory if first time use
   initBuffers(buf_YPR, buf_WORLDACCEL, buf_smooth_WORLDACCEL);
   if (UART_ON == true) {
@@ -54,6 +53,8 @@ void setup() {
   dmp_init();
   time = millis();
   display_tick = millis();
+
+  readStatBlock(534);
 }
 
 void loop() {

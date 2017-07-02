@@ -4,7 +4,7 @@
 class statBlock {
 public:
 	//4 char maximum for strings
-	boolean uploaded = false;
+	int uploaded = -1;
 	int wrkt;
 	int type;
 	int reps;

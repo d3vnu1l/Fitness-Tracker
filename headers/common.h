@@ -28,12 +28,12 @@
 #define WEIGHT_CURLS_ADDR       4	//(16 bit)
 #define WEIGHT_BENCHPRESS_ADDR  6	//(16 bit)
 #define WEIGHT_SQUATS_ADDR      8	//(16 bit)
-#define STAT_POINTER_ADDR	256
+#define STAT_POINTER_ADDR	256		//current active memory position
 #define APP_POINTER_ADDR	258
 //STATS
-#define STAT_BASEMEM_ADDR 512	//base memory address for curl data
+#define STAT_BASEMEM_ADDR 512	
 
-#define MAXMEM_ADDR	4096
+#define MAXMEM_ADDR	4084	//4096 real, 4084 to be safe
 
 /*
 	CURL PARAMETERS
