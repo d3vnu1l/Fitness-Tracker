@@ -54,7 +54,7 @@ void setup() {
   time = millis();
   display_tick = millis();
 
-  readStatBlock(534);
+  readStatBlock(512);
 }
 
 void loop() {
@@ -112,7 +112,7 @@ void loop() {
         _curls(buf_YPR, buf_smooth_WORLDACCEL, data_ptr, buttonPress, 20);
       }
       else if (state == benchpress) {
-        _benchpress(buf_smooth_WORLDACCEL, buttonPress, data_ptr, 100);
+        _benchpress(buf_smooth_WORLDACCEL, buttonPress, data_ptr, 10);
       }
       else if (state == squats) {
         _squats(buf_smooth_WORLDACCEL, data_ptr, 5);

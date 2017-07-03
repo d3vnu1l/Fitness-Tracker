@@ -292,8 +292,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 	}
 	if (numreps == reps || buttonState==true) {
 		//compute averages
-		float avEffort, avSym;
-		int avTime;
+		float avEffort, avSym, avTime;
 		for (int i = 0; i < numreps; i++) {
 			avEffort += effort[i];
 			avTime += time[i];
@@ -301,11 +300,13 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 		}
 		avEffort = avEffort / numreps;
 		avTime = (1.0*avTime / numreps) / 1000;
+		avSym = avSym / numreps;
 
 		//create stat block and send to memory
 		statBlock newSet;
-		newSet.uploaded = -1;
+		newSet.uploaded = false;
 		newSet.reps = numreps;
+		newSet.weight = 133;
 		newSet.type = benchpress;
 		newSet.wrkt = fiveByFive;
 		newSet.avgTime = avTime;
@@ -316,7 +317,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 		Serial.print(", Time:");
 		Serial.print(avTime);
 		Serial.print(", Sym:");
-		Serial.println(avSym / numreps);
+		Serial.println(avSym);
 
 		Serial.println("just gonnna send it");
 		storeStatBlock(newSet);
