@@ -47,9 +47,9 @@ void dmp_init(void) {
 	// load and configure the DMP
 	Serial.println(F("Initializing DMP..."));
 	devStatus = mpu.dmpInitialize();
-	mpu.setXAccelOffset(-5205); // 1688 factory default for my test chip
-	mpu.setYAccelOffset(1749); // 1688 factory default for my test chip
-	mpu.setZAccelOffset(1313); // 1688 factory default for my test chip
+	mpu.setXAccelOffset(-5069); // 1688 factory default for my test chip
+	mpu.setYAccelOffset(1115); // 1688 factory default for my test chip
+	mpu.setZAccelOffset(1181); // 1688 factory default for my test chip
 	mpu.setXGyroOffset(61);
 	mpu.setYGyroOffset(6);
 	mpu.setZGyroOffset(-35);

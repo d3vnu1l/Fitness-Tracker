@@ -82,13 +82,13 @@ void readStatBlock(unsigned int addr) {
 
 //This function resets the device EEPROM to factory settings
 void resetMemory(void) {
-	EEPROM.write(INITIALIZED_ADDR, 0xFF);		//set device as configured
-	updateInt(WEIGHT_CURLS_ADDR, 150);				//default weight size is 150
-	updateInt(WEIGHT_BENCHPRESS_ADDR, 150);				//default weight size is 150
-	updateInt(WEIGHT_SQUATS_ADDR, 150);				//default weight size is 150
-	writeInt(APP_POINTER_ADDR, STAT_BASEMEM_ADDR);
-	writeInt(STAT_POINTER_ADDR, STAT_BASEMEM_ADDR);
-	for (int i = STAT_BASEMEM_ADDR; i < 4095; i += 2) {
+	for (int i = 0; i < EEPROM.length(); i++) {
 		EEPROM.write(i, 0x00);
 	}
+	EEPROM.write(INITIALIZED_ADDR, 0xFF);		//set device as configured
+	updateInt(WEIGHT_CURLS_ADDR, 150);			//default weight size is 150
+	updateInt(WEIGHT_BENCHPRESS_ADDR, 150);		//default weight size is 150
+	updateInt(WEIGHT_SQUATS_ADDR, 150);			//default weight size is 150
+	writeInt(APP_POINTER_ADDR, STAT_BASEMEM_ADDR);
+	writeInt(STAT_POINTER_ADDR, STAT_BASEMEM_ADDR);
 }

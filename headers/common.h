@@ -1,5 +1,6 @@
 #ifndef COMMON_H_
 #define  COMMON_H_
+#include <EEPROM.h>
 /*
 	Hardware assignments
 */
@@ -28,12 +29,12 @@
 #define WEIGHT_CURLS_ADDR       4	//(16 bit)
 #define WEIGHT_BENCHPRESS_ADDR  6	//(16 bit)
 #define WEIGHT_SQUATS_ADDR      8	//(16 bit)
-#define STAT_POINTER_ADDR	256		//current active memory position
-#define APP_POINTER_ADDR	258
+#define STAT_POINTER_ADDR	32		//current active memory position
+#define APP_POINTER_ADDR	34
 //STATS
-#define STAT_BASEMEM_ADDR 512	
+#define STAT_BASEMEM_ADDR 64	
 
-#define MAXMEM_ADDR	4084	//4096 real, 4084 to be safe
+#define MAXMEM_ADDR	(EEPROM.length()-21)	//4096 real, 4084 to be safe
 
 /*
 	CURL PARAMETERS
@@ -47,14 +48,15 @@
 */
 #define BENCHPRESS_MIN 120
 #define VELOCITY_CAP 1000
+#define HEIGHT_CAP 800
 #define MAX_ALLOWABLE_WEIGHT 500
 
 #define BTNDELAYMS 100
 #define ENCDELAYMS 5
 
 #define UART_ON true
-#define DEBUG_A true
-#define DEBUG_H false
+#define DEBUG_A false
+#define DEBUG_H true
 #define DEBUG_T false
 #define DEBUG_MAT true
 

@@ -133,7 +133,7 @@ void loop() {
 
 
   //2. filter new sample//
-  iirHPFA(buf_WORLDACCEL, buf_hpf_WORLDACCEL, data_ptr, 2);			//High pass filter
+  iirHPFA(buf_WORLDACCEL, buf_hpf_WORLDACCEL, data_ptr, 2);
   iirLPF(buf_hpf_WORLDACCEL, buf_smooth_WORLDACCEL, data_ptr, 2);		//low pass filter
 
   //DEBUGGING USE

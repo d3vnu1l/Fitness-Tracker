@@ -82,7 +82,8 @@ void initBuffers(int buf_YPR[][BUFFER_SIZE], int buf_WORLDACCEL[][BUFFER_SIZE], 
 //lpf for acceleration;			(see: http://www-users.cs.york.ac.uk/~fisher/mkfilter/trad.html)
 void iirLPF(int rough[3][BUFFER_SIZE], int smooth[3][BUFFER_SIZE], unsigned int pointer, int axis) 
 {
-	static int xv[4], yv[4];
+	static int xv[4] = { .01,.01,.01,.01 };
+	static int yv[4] = { .01,.01,.01,.01 };
 	const float gain = 48.81977006;
 
 	xv[0] = xv[1]; xv[1] = xv[2]; xv[2] = xv[3];
@@ -96,12 +97,13 @@ void iirLPF(int rough[3][BUFFER_SIZE], int smooth[3][BUFFER_SIZE], unsigned int 
 }
 
 //HPF for acceleration, a higher value of alpha yields a higher cutoff frequency.
-//1 order 
+//1 order	..old 1.008168323
 void iirHPFA(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int pointer, int axis) 
 {
-	static int xv[3], yv[3];
-	const float gain = 1.008168323;
-
+	static int xv[2] = { .8,.8};
+	static int yv[2] = { .8,.8};
+	const float gain = 1.064177440;
+	//Serial.println(yv[0]);
 	xv[0] = xv[1];
 	xv[1] = rough[axis][pointer]/ gain;
 	yv[0] = yv[1];
@@ -114,8 +116,9 @@ void iirHPFA(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int po
 //HPF for velocity
 void iirHPFV(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int pointer, int axis) 
 {
-	static int xv[2], yv[2];
-	const float gain = 1.004398258;
+	static int xv[2] = { .5,.5 };
+	static int yv[2] = { .5,.5 };
+	const float gain = 1.008925362;
 
 	xv[0] = xv[1];
 	xv[1] = rough[axis][pointer]/ gain;
@@ -124,36 +127,6 @@ void iirHPFV(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int po
 		+ (0.9912420038 * yv[0]);
 	hpf[axis][pointer] = yv[1];
 }
-
-/*
-int pivotDetect(float harray[BUFFER_SIZE], int array_ptr, int size) {
-	int signs = 0;
-	int depth = size / 2;
-	int midpoint = array_ptr - depth;
-	if (depth < 0)
-		midpoint = array_ptr + depth;
-
-	int rightseek;
-	int leftseek = midpoint;
-	if (leftseek == (BUFFER_SIZE-1))
-		int rightseek = 0;
-	else int rightseek = (leftseek + 1);
-
-	for (int j = 0; j < depth; j++) {
-		if (abs(harray[leftseek] - harray[rightseek]) <= 0.5) signs -= 1;
-		else signs += (abs(harray[leftseek]) - abs(harray[rightseek]));
-		if (leftseek == 0)
-			leftseek = (BUFFER_SIZE - 1);
-		else leftseek = leftseek - 1;
-		if (rightseek == (BUFFER_SIZE-1))
-			rightseek = 0;
-		else rightseek = rightseek + 1;
-	}
-
-	return signs;
-}
-*/
-
 
 //Find direction of data trend. Returns
 //1.	0 if not moving

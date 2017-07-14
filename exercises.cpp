@@ -154,7 +154,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 	static int still_zoffset = 0;
 	//movement type vars
 	static int dir_last = 0;
-	int deadstill, still, dir;
+	int deadstill, vstill, dir;
 	//stat-track vars
 	static long int acceleration_accum_up = 0;		//*
 	static long int acceleration_accum_down = 0;	//*
@@ -170,7 +170,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 	if (numreps < reps) {
 		//attempt to dampen subtle acceleration effects on velocity
 		int amag = abs(buf_smooth_WORLDACCEL[2][data_ptr]);
-		if (amag < 5)
+		if (amag < 25)
 			vnow = vlast;
 		//else calculate new velocity
 		else
@@ -184,11 +184,17 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 
 		velocity[2][data_ptr] = vnow;
 		//iirHPFV(velocity, velocity_hpf, data_ptr, 2);
-		velocity_hpf[2][data_ptr] = velocity[2][data_ptr];	//bypass HPF for testing
+		//velocity_hpf[2][data_ptr] = velocity[2][data_ptr];	//bypass HPF for testing
 
 		//calculate new height
-		height = height + (0.02 * velocity_hpf[2][data_ptr]);
+		height = height + (0.02 * velocity[2][data_ptr]);
 		dir = directionDetect(velocity, data_ptr, 0, 18, 1);
+
+		//cap height, prevent runoff
+		if (height > HEIGHT_CAP)
+			height = HEIGHT_CAP;
+		else if (height < -HEIGHT_CAP)
+			height = -HEIGHT_CAP;
 
 		if ((h_max-h_min) > BENCHPRESS_MIN && vlast > 0 && vnow < 0) {	//ERROR RESET 
 			//Serial.print("Height ");
@@ -239,7 +245,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 
 		//get information about type of movement using stored accelo data
 		deadstill = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 15, 6);
-		//still = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 3, 10);
+		vstill = detectStill(velocity, data_ptr, still_zoffset, 12, 4);
 		if (dir == 200) {
 			if (buf_smooth_WORLDACCEL[2][data_ptr] > 20)
 				acceleration_accum_up += buf_smooth_WORLDACCEL[2][data_ptr];
@@ -250,9 +256,10 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 		}
 
 		//slowly reduce estimated height when device is not in motion
-		if (still == 1) {
-			//Serial.println("dec heihgt");
-			//height = height*0.999;
+		if (vstill == 1) {
+			//Serial.println("dec v");
+			vnow = 0;
+			vlast = 0;
 		}
 
 		//reset height tracking when device is on the ground
