@@ -183,8 +183,8 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 			vnow = -VELOCITY_CAP;
 
 		velocity[2][data_ptr] = vnow;
-		iirHPFV(velocity, velocity_hpf, data_ptr, 2);
-		//velocity_hpf[2][data_ptr] = velocity[2][data_ptr];	//bypass HPF for testing
+		//iirHPFV(velocity, velocity_hpf, data_ptr, 2);
+		velocity_hpf[2][data_ptr] = velocity[2][data_ptr];	//bypass HPF for testing
 
 		//calculate new height
 		height = height + (0.02 * velocity_hpf[2][data_ptr]);
@@ -205,14 +205,12 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 
 			if (_effort > 1) {
 				time[numreps] = time_passed;
-				//Serial.print(" , ");
-				//Serial.print(_effort);
 				effort[numreps] = _effort;
 				symmetry[numreps] = (1.0*acceleration_accum_down / acceleration_accum_up);
 
 				numreps++;
 
-				if (DEBUG_H == true);
+				if (DEBUG_MAT == true);
 				else {
 					Serial.print("	reps: ");
 					Serial.print(numreps);
