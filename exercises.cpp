@@ -151,6 +151,10 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 	static int vnow = 0;	//*
 	static float height = 0;	//*
 	static float h_max = 0, h_min = 0;	//*
+	static float v_max = 0, v_min = 0;
+	static float a_max = 0, a_min = 0;
+	static float v_median = 0;
+	static int a_median = 0;
 	static int still_zoffset = 0;
 	//movement type vars
 	static int dir_last = 0;
@@ -188,7 +192,6 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 
 		//calculate new height
 		height = height + (0.02 * velocity[2][data_ptr]);
-		dir = directionDetect(velocity, data_ptr, 0, 18, 1);
 
 		//cap height, prevent runoff
 		if (height > HEIGHT_CAP)
@@ -196,20 +199,29 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 		else if (height < -HEIGHT_CAP)
 			height = -HEIGHT_CAP;
 
-		if ((h_max-h_min) > BENCHPRESS_MIN && vlast > 0 && vnow < 0) {	//ERROR RESET 
+		//set max/min
+		if (height > h_max) h_max = height;
+		if (height < h_min) h_min = height;
+		if (vnow > v_max) v_max = vnow;
+		if (vnow < v_min) v_min = vnow;
+		if (buf_smooth_WORLDACCEL[2][data_ptr] > a_max) a_max = buf_smooth_WORLDACCEL[2][data_ptr];
+		if (buf_smooth_WORLDACCEL[2][data_ptr] < a_min) a_min = buf_smooth_WORLDACCEL[2][data_ptr];
+		//Serial.print("deltV ");
+		//Serial.println(v_max - v_min);
+
+
+		if ((v_max-v_min) > BENCHPRESS_MIN && vlast > v_median && vnow < v_median) {	//ERROR RESET & repcount
 			//Serial.print("Height ");
 			//Serial.print(h_max-h_min);
-
+			
+			int dist = h_max - h_min;
 			unsigned int time_passed = millis() - timer;
 			timer = millis();
-			float _effort = (abs(acceleration_accum_up) / (1.0*time_passed));
-			height = 0;
-			h_max = 0;
-			h_min = 0;
-			vnow = 0;
-			vlast = 0;
 
-			if (_effort > 1) {
+			if (dist > 200 ) {
+				float _effort = (abs(acceleration_accum_up) / (1.0*time_passed));
+				v_median = ((v_max + v_min) / 2);
+				//Serial.println(v_median);
 				time[numreps] = time_passed;
 				effort[numreps] = _effort;
 				symmetry[numreps] = (1.0*acceleration_accum_down / acceleration_accum_up);
@@ -233,15 +245,20 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 				}
 
 			}
+			height = 0;
+			h_max = 0;
+			h_min = 0;
+			v_min = 0;
+			v_max = 0;
+			a_min = 0;
+			a_max = 0;
+			vnow = 0;
+			vlast = 0;
 			acceleration_accum_down = 0;
 			acceleration_accum_up = 0;
 		}
 
 		vlast = vnow;
-
-		//set max/min
-		if (height >= h_max) h_max = height;
-		if (height <= h_min) h_min = height;
 
 		//get information about type of movement using stored accelo data
 		deadstill = detectStill(buf_smooth_WORLDACCEL, data_ptr, still_zoffset, 15, 6);
@@ -272,7 +289,14 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 			dir = 0;
 			acceleration_accum_down = 0;
 			acceleration_accum_up = 0;
+			v_median = 0;
 			timer = millis();
+			v_max = 0;
+			v_min = 0;
+			h_max = 0;
+			h_min = 0;
+			a_min = 0;
+			a_max = 0;
 		}
 
 		dir_last = dir;
