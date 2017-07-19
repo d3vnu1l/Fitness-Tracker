@@ -5,8 +5,8 @@
 	Hardware assignments
 */
 #define ENCODERPINA 3
-#define ENCODERPINB 48
-#define BUTTONPIN 46
+#define ENCODERPINB 46
+#define BUTTONPIN 48
 #define INTERRUPT_PIN 2	
 
 #define DELAY_VALUE 200
@@ -52,11 +52,11 @@
 #define MAX_ALLOWABLE_WEIGHT 500
 
 #define BTNDELAYMS 100
-#define ENCDELAYMS 5
+#define ENCDELAYMS 7
 
 #define UART_ON true
 #define DEBUG_A false
-#define DEBUG_H true
+#define DEBUG_H false
 #define DEBUG_T false
 #define DEBUG_MAT true
 

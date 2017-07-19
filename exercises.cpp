@@ -192,6 +192,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 
 		//calculate new height
 		height = height + (0.02 * velocity[2][data_ptr]);
+		dir = directionDetect(velocity, data_ptr, v_median, 18, 1);
 
 		//cap height, prevent runoff
 		if (height > HEIGHT_CAP)
@@ -221,7 +222,6 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 			if (dist > 200 ) {
 				float _effort = (abs(acceleration_accum_up) / (1.0*time_passed));
 				v_median = ((v_max + v_min) / 2);
-				//Serial.println(v_median);
 				time[numreps] = time_passed;
 				effort[numreps] = _effort;
 				symmetry[numreps] = (1.0*acceleration_accum_down / acceleration_accum_up);
@@ -230,6 +230,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 
 				if (DEBUG_MAT == true);
 				else {
+					//Serial.println(v_median);
 					Serial.print("	reps: ");
 					Serial.print(numreps);
 					Serial.print(", ACCUM up : ");

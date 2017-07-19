@@ -212,6 +212,9 @@ void initMainMenu(void)
 void initWOD(void)
 {
 	tft.setTextSize(2);
+	tft.setCursor(35, 46);
+	tft.setTextColor(BLUE);
+	tft.print("CURLS");
 	tft.setTextColor(WHITE);
 	tft.setCursor(30, 89);
 	tft.print("SQUATS");
@@ -220,8 +223,6 @@ void initWOD(void)
 	tft.setCursor(31, 21);
 	tft.print(mr);
 	tft.drawLine(28, 37, 100, 37, WHITE);
-	tft.setCursor(35, 46);
-	tft.print("CURLS");
 
 	tft.setTextSize(1);
 	tft.setCursor(44, 111);
@@ -235,18 +236,22 @@ void updateWOD(int place) {
 
 
 	if (place != place_l) {
+		if (place == 3 && place_l != 3)
+			tft.setTextSize(1);
+
 		tft.setTextColor(BLUE);
 		tft.setCursor(wod_locations[place][0], wod_locations[place][1]);
 		tft.print(wod_redrawables[place]);
 
+		if (place == 3 && place_l != 3)
+			tft.setTextSize(2);
+
+		if (place != 3 && place_l == 3)
+			tft.setTextSize(1);
+
 		tft.setTextColor(WHITE);
 		tft.setCursor(wod_locations[place_l][0], wod_locations[place_l][1]);
 		tft.print(wod_redrawables[place_l]);
-	}
-	else {
-		tft.setTextColor(BLUE);
-		tft.setCursor(wod_locations[place][0], wod_locations[place][1]);
-		tft.print(wod_redrawables[place]);
 	}
 
 	place_l = place;

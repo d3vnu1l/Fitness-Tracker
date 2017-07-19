@@ -10,33 +10,15 @@ extern int nextWorkout;
 // 1  -clockwise
 //-1  -counterclockwise
 int encoderPressed() {
-	static int lastpress = millis();
-	static int encoder0PinALast = LOW;
-
-	if ((millis() - lastpress) < ENCDELAYMS) {
-		//encoder0PinALast = digitalRead(ENCODERPINA);
-		return 0;
-	}
-
-	else {
-		int n = digitalRead(ENCODERPINA);
-		if ((encoder0PinALast == LOW) && (n == HIGH)) {
-			if (digitalRead(ENCODERPINB) == LOW) {
-				encoder0PinALast = n;
-				lastpress = millis();
-				return 1;
-			}
-			else {
-				encoder0PinALast = n;
-				lastpress = millis();
-				return -1;
-			}
-		}
-		else {
-			encoder0PinALast = n;
-			return 0;
-		}
-	}
+	static int8_t enc_states[] = { 0,-1,1,0,1,0,0,-1,-1,0,0,1,0,1,-1,0 };
+	static uint8_t old_AB = 0;
+	/**/
+	old_AB <<= 2;                   //remember previous state
+	uint8_t A = digitalRead(ENCODERPINA);
+	uint8_t B = digitalRead(ENCODERPINB);
+	uint8_t ENC_PORT = A + (B << 1);
+	old_AB |= (ENC_PORT & 0x03);  //add current state
+	return (enc_states[(old_AB & 0x0f)]);
 }
 
 //returns button press status
