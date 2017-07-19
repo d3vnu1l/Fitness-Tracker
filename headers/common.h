@@ -4,8 +4,8 @@
 /*
 	Hardware assignments
 */
-#define ENCODERPINA 3
-#define ENCODERPINB 46
+#define ENCODERPINA 37
+#define ENCODERPINB 36
 #define BUTTONPIN 48
 #define INTERRUPT_PIN 2	
 

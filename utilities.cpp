@@ -1,24 +1,33 @@
+#include <RotaryEncoder.h>
 # include "headers\utilities.h"
 # include "headers\common.h"
 #include "Wire.h"
 #include "Arduino.h"
 extern int state, laststate;
 extern int nextWorkout;
+RotaryEncoder encoder(ENCODERPINA, ENCODERPINB);
 
 //Returns one of 3 values;
 // 0  -no movement
 // 1  -clockwise
 //-1  -counterclockwise
 int encoderPressed() {
-	static int8_t enc_states[] = { 0,-1,1,0,1,0,0,-1,-1,0,0,1,0,1,-1,0 };
-	static uint8_t old_AB = 0;
-	/**/
-	old_AB <<= 2;                   //remember previous state
-	uint8_t A = digitalRead(ENCODERPINA);
-	uint8_t B = digitalRead(ENCODERPINB);
-	uint8_t ENC_PORT = A + (B << 1);
-	old_AB |= (ENC_PORT & 0x03);  //add current state
-	return (enc_states[(old_AB & 0x0f)]);
+	static int pos = 0;
+	encoder.tick();
+	int newPos = encoder.getPosition();
+
+	if (pos != newPos) {
+		if (newPos > pos) {
+			pos = newPos;
+			return 1;
+		}
+		else {
+			pos = newPos;
+			return -1;
+		}
+	}
+	pos = newPos;
+	return 0;
 }
 
 //returns button press status
