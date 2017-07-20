@@ -70,6 +70,7 @@ void _wod(bool buttonState, int encoderChange) {
 		if (nextWorkout == (ex_disps.ex_size - 1))
 			switchState(laststate);
 		else switchState(chooseWeight);
+		nextWorkout = 0;
 	}
 	if(canDraw==true) drawScreen(nextWorkout);
 }
@@ -250,6 +251,7 @@ void _settings(bool buttonPress, int encoderChange) {
 			switchState(laststate);
 			break;
 		}
+		index = 0;
 	}
 	if (canDraw == true) updateSettings(index);
 }

@@ -102,8 +102,8 @@ void initScreen(void) {
 		case curls:
 			initCurls();
 			break;
-		case benchpress:
-			initBenchpress();
+		case personalRecords:
+			initPersonalRecords();
 			break;
 		}
 		init_ed = true;
@@ -124,6 +124,9 @@ void drawScreen(int reps) {
 			updateExercise(reps);
 			break;
 		case benchpress:
+			updateExercise(reps);
+			break;
+		case personalRecords:
 			updateExercise(reps);
 			break;
 		}
@@ -343,6 +346,14 @@ void updateBT(void) {
 		tft.drawLine(32, 16, 28, 13, BLACK);
 		tft.drawLine(32, 16, 28, 19, BLACK);
 	}
+}
+
+void initPersonalRecords(void) {
+
+}
+
+void updatePersonalrecords(int place) {
+
 }
 
 

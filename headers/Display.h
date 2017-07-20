@@ -17,7 +17,8 @@ void updateExercise(int);
 void updateMainMenu(int);
 void updateWOD(int);
 
-
+void initPersonalRecords(void);
+void updatePersonalRecords(int);
 
 
 void drawDeadliftGO(int);

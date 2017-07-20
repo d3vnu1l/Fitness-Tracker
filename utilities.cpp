@@ -89,6 +89,7 @@ void iirLPF(int rough[3][BUFFER_SIZE], int smooth[3][BUFFER_SIZE], unsigned int 
 
 //HPF for acceleration, a higher value of alpha yields a higher cutoff frequency.
 //1 order	..old 1.008168323
+/*
 void iirHPFA(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int pointer, int axis) 
 {
 	static int xv[2] = { .8,.8};
@@ -103,6 +104,7 @@ void iirHPFA(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int po
 	hpf[axis][pointer] = yv[1];
 
 }
+*/
 
 //HPF for velocity
 void iirHPFV(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int pointer, int axis) 
@@ -118,6 +120,7 @@ void iirHPFV(int rough[3][BUFFER_SIZE], int hpf[3][BUFFER_SIZE], unsigned int po
 		+ (0.9912420038 * yv[0]);
 	hpf[axis][pointer] = yv[1];
 }
+
 
 //Find direction of data trend. Returns
 //1.	0 if not moving
