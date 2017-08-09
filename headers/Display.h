@@ -4,7 +4,7 @@
 
 void setupScreen(void);
 void initScreen(void);
-void drawScreen(int);
+void drawScreen(int, int);
 
 void initCurls(void);
 void initBenchpress(void);
@@ -28,5 +28,8 @@ void initSettings(void);
 
 void destroyScreen(void);
 void updateBT(void);
+
+void initChooseWeight(void);
+void updateChooseWeight(int, int);
 
 #endif

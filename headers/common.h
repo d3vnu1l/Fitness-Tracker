@@ -4,7 +4,7 @@
 /*
 	Hardware assignments
 */
-#define ENCODERPINA 37
+#define ENCODERPINA 3
 #define ENCODERPINB 36
 #define BUTTONPIN 48
 #define INTERRUPT_PIN 2	
@@ -52,7 +52,6 @@
 #define MAX_ALLOWABLE_WEIGHT 500
 
 #define BTNDELAYMS 100
-#define ENCDELAYMS 7
 
 #define UART_ON true
 #define DEBUG_A false
@@ -65,7 +64,7 @@
 */
 #define TFT_CS    53 //uno8
 #define TFT_RST   45 //uno9  
-#define TFT_DC     47//uno10
+#define TFT_DC    47//uno10
 #define REFRESH	  0
 enum states
 {

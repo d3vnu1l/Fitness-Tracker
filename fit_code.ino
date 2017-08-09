@@ -6,7 +6,9 @@
 #include "headers\eepromUtilities.h"
 #include "headers\blueTooth.h"
 #include "headers\Display.h"
+#include "prescaler.h"
 #include "EEPROM.h"
+#include <Arduino.h>
 
 // ================================================================
 // ===               Global Vars                                ===
@@ -16,9 +18,11 @@ exercise_strings ex_disps;
 int state = 0, laststate = 0;
 int nextWorkout = 0;
 bool bluetoothConnected = true;
+int tmpENCdata=0;
 unsigned long time = 0;
 unsigned long display_tick = 0;
 bool canDraw = false;
+bool encInterrupt = false;
 
 //MPU VARS//
 extern uint16_t packetSize;
@@ -40,6 +44,8 @@ unsigned int data_ptr = 0;
 // ===                         MAIN                             ===
 // ================================================================
 void setup() {
+  setClockPrescaler(1);  //sim 8mhz, for dev board only
+  attachInterrupt(digitalPinToInterrupt(3), encoderInterrupt, CHANGE);
   pinMode(ENCODERPINA, INPUT);
   pinMode(ENCODERPINB, INPUT);
   pinMode(BUTTONPIN, INPUT);
@@ -48,7 +54,7 @@ void setup() {
   if (EEPROM.read(INITIALIZED_ADDR) == 0) resetMemory();				//configures memory if first time use
   initBuffers(buf_YPR, buf_WORLDACCEL, buf_smooth_WORLDACCEL);
   if (UART_ON == true) {
-	  Serial.begin(115200); while (!Serial);
+	  Serial.begin(57600); while (!Serial);
   }
   dmp_init();
   time = millis();
@@ -67,22 +73,20 @@ void loop() {
   //btSend("test", iTos(state)); //**//
 
   //************************************************************************************************************
-  while (!mpuInterrupt && fifoCount < packetSize) {
+  while ((!mpuInterrupt) && fifoCount < packetSize) {
     /* IDLE WORK GOES HERE
     		(this section is continuously looping so long as there is no new dmp sample)
     */
     if (buttonPress == true);			//holds button press while system is idling
     else buttonPress = buttonPressed();
-    encoderChange += encoderPressed();	//holds encoder var while idling
-
+    encoderChange += tmpENCdata;	//holds encoder var while idling
+	//Serial.println(tmpENCdata);
+	tmpENCdata = 0;
     /* STATES GO HERE
-    		(update rate = 100 Hz flagged after dmp sample)
+    		(update rate = 50 Hz flagged after dmp sample)
     */
 
     if (processedData == false) {
-      //kill cycles to emulate 8mhz operation
-      //for (int k = 0; k < 10000; k++) _NOP();	//cycle waste to emulate 8mhz
-
       if (state == mainMenu)                                                                 //start
       {
         _mainMenu(buttonPress, encoderChange);
@@ -135,6 +139,7 @@ void loop() {
   //2. filter new sample//
   //iirHPFA(buf_WORLDACCEL, buf_hpf_WORLDACCEL, data_ptr, 2);
   iirLPF(buf_WORLDACCEL, buf_smooth_WORLDACCEL, data_ptr, 2);		//low pass filter
+  //iirBPF(buf_WORLDACCEL, buf_smooth_WORLDACCEL, data_ptr, 2);
 
   //DEBUGGING USE
   if (DEBUG_A == true) {
@@ -164,6 +169,10 @@ void loop() {
   state_l = state;
 }
 
+void encoderInterrupt() {
+	tmpENCdata += encoderPressed();
+	//if (tmpENCdata) Serial.println(tmpENCdata);
+}
 
 
 

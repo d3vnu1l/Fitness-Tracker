@@ -4,7 +4,7 @@
 #include <Adafruit_ST7735.h> // Hardware-specific library
 //#include <SPI.h>
 #include <Fonts/FreeMonoBoldOblique18pt7b.h>
-#include <Fonts/FreeSerif9pt7b.h> //Each filename starts with the face name (ìFreeMonoî, ìFreeSerifî, etc.) followed by the style (ìBoldî, ìObliqueî, none, etc.), font size in points (currently 9, 12, 18 and 24 point sizes are provided) and ì7bî to indicate that these contain 7-bit characters (ASCII codes ì î through ì~î); 8-bit fonts (supporting symbols and/or international characters) are not yet provided but may come later.
+#include <Fonts/FreeSerif9pt7b.h> //Each filename starts with the face name (‚ÄúFreeMono‚Äù, ‚ÄúFreeSerif‚Äù, etc.) followed by the style (‚ÄúBold‚Äù, ‚ÄúOblique‚Äù, none, etc.), font size in points (currently 9, 12, 18 and 24 point sizes are provided) and ‚Äú7b‚Äù to indicate that these contain 7-bit characters (ASCII codes ‚Äú ‚Äù through ‚Äú~‚Äù); 8-bit fonts (supporting symbols and/or international characters) are not yet provided but may come later.
 #include "resources\bitmaps.h"
 #include <avr/pgmspace.h>
 #include "headers\dmp.h"
@@ -34,7 +34,7 @@ const PROGMEM String SETT = "SETTINGS";
 const PROGMEM String Y = "YES";
 const PROGMEM String N = "NO";
 const PROGMEM String CO = "CONNECT";
-const PROGMEM String TA = "TRY AGAIN";
+const PROGMEM String TA = "DISCONNECT";
 const PROGMEM String CLD = "CLEAR DATA";
 const PROGMEM String GB = "GO BACK";
 const PROGMEM String GO = "GO!";
@@ -102,15 +102,21 @@ void initScreen(void) {
 		case curls:
 			initCurls();
 			break;
+		case benchpress:
+			initBenchpress();
+			break;
 		case personalRecords:
 			initPersonalRecords();
+			break;
+		case chooseWeight:
+			initChooseWeight();
 			break;
 		}
 		init_ed = true;
 	}
 }
 
-void drawScreen(int reps) {
+void drawScreen(int reps, int tier) {
 
 	if (init_ed == true) {
 		switch (state) {
@@ -127,7 +133,10 @@ void drawScreen(int reps) {
 			updateExercise(reps);
 			break;
 		case personalRecords:
-			updateExercise(reps);
+			updatePersonalRecords(reps);
+			break;
+		case chooseWeight:
+			updateChooseWeight(reps, tier);
 			break;
 		}
 	}
@@ -349,11 +358,111 @@ void updateBT(void) {
 }
 
 void initPersonalRecords(void) {
+	tft.setTextSize(2);
+	tft.setCursor(35, 46);
+	tft.setTextColor(BLUE);
+	tft.print("CURLS");
+	tft.setTextColor(WHITE);
+	tft.setCursor(30, 89);
+	tft.print("SQUATS");
+	tft.setCursor(5, 68);
+	tft.print("BENCHPRESS");
+	tft.setCursor(22, 21);
+	tft.print("RECORDS");
+	tft.drawLine(20, 37, 100, 37, WHITE);
 
+	tft.setTextSize(1);
+	tft.setCursor(44, 111);
+	tft.print("GO BACK");
 }
 
-void updatePersonalrecords(int place) {
+void updatePersonalRecords(int place) {
+	resetF();
+	static int place_l = place;
+	tft.setTextSize(2);
 
+
+	if (place != place_l) {
+		if (place == 3 && place_l != 3)
+			tft.setTextSize(1);
+
+		tft.setTextColor(BLUE);
+		tft.setCursor(wod_locations[place][0], wod_locations[place][1]);
+		tft.print(wod_redrawables[place]);
+
+		if (place == 3 && place_l != 3)
+			tft.setTextSize(2);
+
+		if (place != 3 && place_l == 3)
+			tft.setTextSize(1);
+
+		tft.setTextColor(WHITE);
+		tft.setCursor(wod_locations[place_l][0], wod_locations[place_l][1]);
+		tft.print(wod_redrawables[place_l]);
+	}
+
+	place_l = place;
+	enableF();
+}
+
+void initChooseWeight(void) {
+	tft.setTextSize(2);
+	tft.setCursor(5, 57);
+	tft.setTextColor(WHITE);
+	tft.print("WEIGHT:");
+	tft.setCursor(31, 21);
+	tft.print(mr);
+	tft.drawLine(28, 37, 100, 37, WHITE);
+
+	tft.setTextSize(1);
+	tft.setCursor(50, 95);
+	tft.print("START");
+	tft.setCursor(44, 111);
+	tft.print("GO BACK");
+}
+
+void updateChooseWeight(int reps, int tier) {
+	static int rep_last = 0;
+	resetF();
+
+	if (tier == 0) {
+		if (reps != rep_last) {
+			tft.setTextSize(2);
+			tft.setTextColor(BLACK);
+			tft.setCursor(86, 57);
+			tft.print(rep_last);
+			rep_last = reps;
+			tft.setCursor(86, 57);
+			tft.setTextColor(BLUE);
+			tft.print(reps);
+		}
+	}
+	else if (tier == 1) {
+		tft.setTextSize(2);
+		tft.setTextColor(WHITE);
+		tft.setCursor(86, 57);
+		tft.print(rep_last);
+		if (reps == 0) {
+			tft.setTextColor(BLUE);
+			tft.setTextSize(1);
+			tft.setCursor(50, 95);
+			tft.print("START");
+			tft.setTextColor(WHITE);
+			tft.setCursor(44, 111);
+			tft.print("GO BACK");
+		}
+		else if (reps==1){
+			tft.setTextColor(WHITE);
+			tft.setTextSize(1);
+			tft.setCursor(50, 95);
+			tft.print("START");
+			tft.setTextColor(BLUE);
+			tft.setCursor(44, 111);
+			tft.print("GO BACK");
+		}
+
+	}
+	enableF();
 }
 
 
@@ -361,3 +470,4 @@ void destroyScreen(void) {
 	init_ed = false;
 	tft.fillCircle(64, 64, 64, BLACK);
 }
+

@@ -92,3 +92,4 @@ void resetMemory(void) {
 	writeInt(APP_POINTER_ADDR, STAT_BASEMEM_ADDR);
 	writeInt(STAT_POINTER_ADDR, STAT_BASEMEM_ADDR);
 }
+

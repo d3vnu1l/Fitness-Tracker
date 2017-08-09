@@ -128,7 +128,7 @@ void _curls(int buf_YPR[][BUFFER_SIZE], int buf_smooth_WORLDACCEL[][BUFFER_SIZE]
 		}
 		if (angle[data_ptr] < min)
 			min = angle[data_ptr];
-		if (canDraw == true) drawScreen(numreps);
+		if (canDraw == true) drawScreen(numreps, 0);
 	}
 	else if (numreps == reps) {											//assign next state here
 		numreps = -1;
@@ -153,7 +153,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 	static float h_max = 0, h_min = 0;	//*
 	static float v_max = 0, v_min = 0;
 	static float a_max = 0, a_min = 0;
-	static float v_median = 0;
+	static float v_median = 0.1;
 	static int a_median = 0;
 	static int still_zoffset = 0;
 	//movement type vars
@@ -216,21 +216,22 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 			//Serial.print(h_max-h_min);
 			
 			int dist = h_max - h_min;
-			unsigned int time_passed = millis() - timer;
-			timer = millis();
 
-			if (dist > 200 ) {
+			//if (dist > 200 ) {
+				unsigned int time_passed = millis() - timer;
+				timer = millis();
 				float _effort = (abs(acceleration_accum_up) / (1.0*time_passed));
-				v_median = ((v_max + v_min) / 2);
+				v_median = (v_median+((v_max + v_min) / 2))/2.0;
 				time[numreps] = time_passed;
 				effort[numreps] = _effort;
 				symmetry[numreps] = (1.0*acceleration_accum_down / acceleration_accum_up);
 
 				numreps++;
 
+				//DEBUG code
 				if (DEBUG_MAT == true);
 				else {
-					//Serial.println(v_median);
+					Serial.println(v_median);
 					Serial.print("	reps: ");
 					Serial.print(numreps);
 					Serial.print(", ACCUM up : ");
@@ -244,19 +245,18 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 					Serial.print(", symmetry: ");
 					Serial.println(symmetry[numreps - 1]);
 				}
-
-			}
-			height = 0;
-			h_max = 0;
-			h_min = 0;
-			v_min = 0;
-			v_max = 0;
-			a_min = 0;
-			a_max = 0;
-			vnow = 0;
-			vlast = 0;
-			acceleration_accum_down = 0;
-			acceleration_accum_up = 0;
+				height = 0;
+				h_max = 0;
+				h_min = 0;
+				v_min = 0;
+				v_max = 0;
+				a_min = 0;
+				a_max = 0;
+				vnow = 0;
+				vlast = 0;
+				acceleration_accum_down = 0;
+				acceleration_accum_up = 0;
+			//}
 		}
 
 		vlast = vnow;
@@ -290,7 +290,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 			dir = 0;
 			acceleration_accum_down = 0;
 			acceleration_accum_up = 0;
-			v_median = 0;
+			v_median = 0.1;
 			timer = millis();
 			v_max = 0;
 			v_min = 0;
@@ -318,7 +318,7 @@ void _benchpress(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], bool buttonState, uns
 			//Serial.print(" reps: ");
 			//Serial.println(numreps);
 		}
-		if (canDraw == true) drawScreen(numreps);
+		if (canDraw == true) drawScreen(numreps, 0);
 	}
 	if (numreps == reps || buttonState==true) {
 		//compute averages
@@ -516,4 +516,5 @@ void _squats(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, in
 void _fitnessTest() {
 	//needs implementation
 }
+
 

@@ -15,7 +15,11 @@ void _mainMenu(bool buttonPress, int encoderChange) {
 	static int index = 0;          //holds menu index 
 	int dif = (index + encoderChange);    //get number of encoder turns 
 	if (buttonPress == false) {
-		if (dif >= 0 && dif <= 2)      //do not let index variable exceed number of states 
+		if (dif < 0)
+			index = 0;		//do not let index variable exceed number of states 
+		else if (dif > 2)
+			index = 2;
+		else
 			index = dif;          //map 'mode' variable to states 
 
 
@@ -55,24 +59,30 @@ void _mainMenu(bool buttonPress, int encoderChange) {
 }
 
 void _wod(bool buttonState, int encoderChange) {
-	int dif = (nextWorkout + encoderChange);
-	if (buttonState == false) {
-		if (dif >= 0 && dif < ex_disps.ex_size)
-			nextWorkout = dif;					//map 'index' variable to states
+	static int nextSelection = 0;
+	int index = (nextSelection + encoderChange);
+	if (buttonState == false) { 
+		if (index < 0)
+			nextSelection = 0;		//do not let index variable exceed number of states 
+		else if (index >= ex_disps.ex_size)
+			nextSelection = ex_disps.ex_size-1;
+		else
+			nextSelection = index;          //map 'mode' variable to states 
 
 		// /*	//Display
 		if (DEBUG_A == false)
-			Serial.println(ex_disps.ex_strings[nextWorkout]);
+			Serial.println(ex_disps.ex_strings[nextSelection]);
 		// */
 	}
 	else {
 		//write finalized value
-		if (nextWorkout == (ex_disps.ex_size - 1))
+		if (nextSelection == (ex_disps.ex_size - 1))
 			switchState(laststate);
 		else switchState(chooseWeight);
-		nextWorkout = 0;
+		nextWorkout = nextSelection;
+		nextSelection = 0;
 	}
-	if(canDraw==true) drawScreen(nextWorkout);
+	if(canDraw==true) drawScreen(nextSelection, 0);
 }
 
 void _chooseWeight(bool buttonState, int encoderChange) {
@@ -101,6 +111,9 @@ void _chooseWeight(bool buttonState, int encoderChange) {
 		}
 		Serial.print("Weight is ");
 		Serial.println(weight);
+
+		//DRAW TFT
+		drawScreen(weight, 0);
 	}
 	else if (weightIsSet == false && buttonState == true) {
 		weightIsSet = true;
@@ -124,6 +137,8 @@ void _chooseWeight(bool buttonState, int encoderChange) {
 				break;
 			}
 		}
+		//DRAW TFT
+		drawScreen(index, 1);
 	}
 	else {
 		switch (index)
@@ -148,7 +163,7 @@ void _chooseWeight(bool buttonState, int encoderChange) {
 			break;
 		}
 	}
-
+	
 }
 
 void _warmup(unsigned long &time) {
@@ -162,12 +177,15 @@ void _warmup(unsigned long &time) {
 		laststate = warmup;
 		switch (nextWorkout) {
 		case 0: //curls
+			nextWorkout = 0;
 			switchState(curls);
 			break;
 		case 1: //benchpress
+			nextWorkout = 0;
 			switchState(benchpress);
 			break;
 		case 2: //squats
+			nextWorkout = 0;
 			switchState(benchpress);
 			break;
 		}
@@ -285,4 +303,7 @@ void _personalRecords(bool buttonPress, int encoderChange) {
 			break;
 		}
 	}
+
+	drawScreen(index, 0);
 }
+
