@@ -113,10 +113,10 @@ void loop() {
         _cooldown();
       }
       else if (state == curls) {   //curls
-        _curls(buf_YPR, buf_smooth_WORLDACCEL, data_ptr, buttonPress, 20);
+        _curls(buf_YPR, buf_smooth_WORLDACCEL, data_ptr, buttonPress, 10);
       }
       else if (state == benchpress) {
-        _benchpress(buf_smooth_WORLDACCEL, buttonPress, data_ptr, 100);
+        _benchpress(buf_smooth_WORLDACCEL, buttonPress, data_ptr, 5);
       }
       else if (state == squats) {
         _squats(buf_smooth_WORLDACCEL, data_ptr, 5);

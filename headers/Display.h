@@ -6,6 +6,9 @@ void setupScreen(void);
 void initScreen(void);
 void drawScreen(int, int);
 
+void initCooldown();
+void updateCooldown(int);
+
 void initCurls(void);
 void initBenchpress(void);
 void initSquats(void);

@@ -111,6 +111,9 @@ void initScreen(void) {
 		case chooseWeight:
 			initChooseWeight();
 			break;
+		case cooldown:
+			initCooldown();
+			break;
 		}
 		init_ed = true;
 	}
@@ -137,6 +140,9 @@ void drawScreen(int reps, int tier) {
 			break;
 		case chooseWeight:
 			updateChooseWeight(reps, tier);
+			break;
+		case cooldown:
+			updateCooldown(reps);
 			break;
 		}
 	}
@@ -465,7 +471,34 @@ void updateChooseWeight(int reps, int tier) {
 	enableF();
 }
 
+void initCooldown() {
+	tft.setTextSize(2);
+	tft.setCursor(15, 57);
+	tft.setTextColor(WHITE);
+	tft.print("COOLDOWN");
+	tft.setCursor(31, 21);
+	tft.print(mr);
+	tft.drawLine(28, 37, 100, 37, WHITE);
 
+}
+
+void updateCooldown(int time) {
+	static int last = COOLDOWN;
+	int count = COOLDOWN - time;
+
+	tft.setTextSize(2);
+
+	if (count != last) {
+		tft.setCursor(65, 95);
+		tft.setTextColor(BLACK);
+		tft.print(last);
+	}
+	tft.setCursor(65, 95);
+	tft.setTextColor(WHITE);
+	tft.print(count);
+
+	last = count;
+}
 void destroyScreen(void) {
 	init_ed = false;
 	tft.fillCircle(64, 64, 64, BLACK);

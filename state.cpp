@@ -77,7 +77,7 @@ void _wod(bool buttonState, int encoderChange) {
 	else {
 		//write finalized value
 		if (nextSelection == (ex_disps.ex_size - 1))
-			switchState(laststate);
+			switchState(mainMenu);
 		else switchState(chooseWeight);
 		nextWorkout = nextSelection;
 		nextSelection = 0;
@@ -202,17 +202,18 @@ void _cooldown() {
 	if (counting == true) {
 		if (elapsed % 1000 == 0) Serial.println(elapsed / 1000);
 		elapsed = millis() - start;
+		drawScreen(elapsed/1000, 0);
 		if ((elapsed / 1000) >= COOLDOWN) {
 			counting = false;
 			switch (laststate) {
 			case curls:
-				switchState(benchpress);
+				switchState(mainMenu);
 				break;
 			case benchpress:
-				switchState(squats);
+				switchState(mainMenu);
 				break;
 			case squats:
-				switchState(curls);
+				switchState(mainMenu);
 				break;
 			}
 		}
@@ -290,15 +291,19 @@ void _personalRecords(bool buttonPress, int encoderChange) {
 		switch (index)
 		{
 		case 0:
+			index = 0;
 			switchState(laststate);
 			break;
 		case 1:
+			index = 0;
 			switchState(laststate);
 			break;
 		case 2:
+			index = 0;
 			switchState(laststate);
 			break;
 		case 3:
+			index = 0;
 			switchState(laststate);
 			break;
 		}
