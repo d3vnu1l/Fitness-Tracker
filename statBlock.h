@@ -1,10 +1,9 @@
 #ifndef STATBLOCK_H_
 #define  STATBLOCK_H_
 
-class statBlock {
-public:
+struct statBlock {
 	//4 char maximum for strings
-	boolean uploaded = false;
+	char uploaded = 0;
 	int wrkt;
 	int type;
 	int reps;
@@ -15,4 +14,3 @@ public:
 };
 
 #endif
-

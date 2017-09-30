@@ -1,10 +1,10 @@
-#include "headers\common.h"
+#include "common.h"
 #include "Arduino.h"
-#include "headers\statBlock.h"
-#include "headers\utilities.h"
+#include "statBlock.h"
+#include "utilities.h"
 #include "EEPROM.h"
-#include "headers\eepromUtilities.h"
-#include "headers\Display.h"
+#include "eepromUtilities.h"
+#include "Display.h"
 
 extern int state, laststate;
 extern bool canDraw;
@@ -516,5 +516,6 @@ void _squats(int buf_smooth_WORLDACCEL[][BUFFER_SIZE], unsigned int data_ptr, in
 void _fitnessTest() {
 	//needs implementation
 }
+
 
 

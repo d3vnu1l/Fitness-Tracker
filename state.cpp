@@ -1,9 +1,9 @@
-#include "headers\common.h"
-#include "headers\utilities.h"
+#include "common.h"
+#include "utilities.h"
 #include "Arduino.h"
 #include "EEPROM.h"
-#include "headers\eepromUtilities.h"
-#include "headers\Display.h"
+#include "eepromUtilities.h"
+#include "Display.h"
 
 extern int state, laststate;
 extern exercise_strings ex_disps;
@@ -311,4 +311,5 @@ void _personalRecords(bool buttonPress, int encoderChange) {
 
 	drawScreen(index, 0);
 }
+
 

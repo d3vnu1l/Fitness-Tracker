@@ -1,11 +1,11 @@
 // Arduino does not provide built in functions for eeprom int and long functions
 //		These are built here
 #include "Arduino.h"
-#include "headers\eepromUtilities.h"
-#include "headers\common.h"
+#include "eepromUtilities.h"
+#include "common.h"
 #include "EEPROM.h"
-#include "headers\statBlock.h"
-#include "headers\dmp.h"
+#include "statBlock.h"
+#include "dmp.h"
 
 
 void writeInt(int address, int value) {
@@ -92,4 +92,5 @@ void resetMemory(void) {
 	writeInt(APP_POINTER_ADDR, STAT_BASEMEM_ADDR);
 	writeInt(STAT_POINTER_ADDR, STAT_BASEMEM_ADDR);
 }
+
 

@@ -1,11 +1,11 @@
-#include "headers\common.h"
-#include "headers\utilities.h"
-#include "headers\dmp.h"
-#include "headers\exercises.h"
-#include "headers\state.h"
-#include "headers\eepromUtilities.h"
-#include "headers\blueTooth.h"
-#include "headers\Display.h"
+#include "common.h"
+#include "utilities.h"
+#include "dmp.h"
+#include "exercises.h"
+#include "state.h"
+#include "eepromUtilities.h"
+#include "blueTooth.h"
+#include "Display.h"
 #include "prescaler.h"
 #include "EEPROM.h"
 #include <Arduino.h>
@@ -173,6 +173,7 @@ void encoderInterrupt() {
 	tmpENCdata += encoderPressed();
 	//if (tmpENCdata) Serial.println(tmpENCdata);
 }
+
 
 
 

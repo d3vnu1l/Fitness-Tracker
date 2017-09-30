@@ -1,5 +1,5 @@
-# include "headers\utilities.h"
-# include "headers\common.h"
+# include "utilities.h"
+# include "common.h"
 #include "Wire.h"
 #include "Arduino.h"
 extern int state, laststate;
@@ -198,4 +198,5 @@ void switchState(int newstate) {
 	laststate = state;
 	state = newstate;
 }
+
 

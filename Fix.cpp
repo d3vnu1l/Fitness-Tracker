@@ -41,7 +41,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <avr/io.h>
 #include <stdlib.h>
 #include <string.h>
-#include "headers\fix.h"
+#include "fix.h"
 
 #define MAX_STRING_SIZE 8
 
@@ -307,7 +307,7 @@ int32_t FP_Sin(int32_t fp) {
 	result = FP_Multiply((result + FP_ONE), fp);
 	/*
 	//taylor series
-	// sin(x) = x âˆ’ (x^3)/3! + (x^5)/5! âˆ’ (x^7)/7! + ...
+	// sin(x) = x Ã¢Ë†â€™ (x^3)/3! + (x^5)/5! Ã¢Ë†â€™ (x^7)/7! + ...
 	sqr = FP_Multiply(fp, fp);
 	fp = FP_Multiply(fp, sqr);
 	result -= FP_Divide(fp, itok(6));
@@ -351,4 +351,5 @@ int32_t _FP_SquareRoot(int32_t val, int32_t Q) {
 	else
 		return(sval >> (Q - 15));
 }
+
 

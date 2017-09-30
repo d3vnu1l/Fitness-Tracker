@@ -1,13 +1,13 @@
-#include "headers\Display.h"
+#include "Display.h"
 #include <Arduino.h>
 #include <Adafruit_GFX.h>    // Core graphics library
 #include <Adafruit_ST7735.h> // Hardware-specific library
 //#include <SPI.h>
 #include <Fonts/FreeMonoBoldOblique18pt7b.h>
-#include <Fonts/FreeSerif9pt7b.h> //Each filename starts with the face name (“FreeMono”, “FreeSerif”, etc.) followed by the style (“Bold”, “Oblique”, none, etc.), font size in points (currently 9, 12, 18 and 24 point sizes are provided) and “7b” to indicate that these contain 7-bit characters (ASCII codes “ ” through “~”); 8-bit fonts (supporting symbols and/or international characters) are not yet provided but may come later.
+#include <Fonts/FreeSerif9pt7b.h> //Each filename starts with the face name (â€œFreeMonoâ€�, â€œFreeSerifâ€�, etc.) followed by the style (â€œBoldâ€�, â€œObliqueâ€�, none, etc.), font size in points (currently 9, 12, 18 and 24 point sizes are provided) and â€œ7bâ€� to indicate that these contain 7-bit characters (ASCII codes â€œ â€� through â€œ~â€�); 8-bit fonts (supporting symbols and/or international characters) are not yet provided but may come later.
 #include "resources\bitmaps.h"
 #include <avr/pgmspace.h>
-#include "headers\dmp.h"
+#include "dmp.h"
 
 
 
@@ -503,4 +503,5 @@ void destroyScreen(void) {
 	init_ed = false;
 	tft.fillCircle(64, 64, 64, BLACK);
 }
+
 

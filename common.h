@@ -5,8 +5,8 @@
 	Hardware assignments
 */
 #define ENCODERPINA 3
-#define ENCODERPINB 36
-#define BUTTONPIN 48
+#define ENCODERPINB 35
+#define BUTTONPIN 31
 #define INTERRUPT_PIN 2	
 
 #define DELAY_VALUE 200
@@ -63,7 +63,7 @@
 	Screen
 */
 #define TFT_CS    53 //uno8
-#define TFT_RST   45 //uno9  
+#define TFT_RST   9 //uno9  
 #define TFT_DC    47//uno10
 #define REFRESH	  0
 enum states
