@@ -2,7 +2,7 @@
 #ifndef FIX_H
 #define FIX_H
 
-#include <arduino.h>
+#include <Arduino.h>
 #include "stdint.h"
 
 //Pragmas
@@ -48,3 +48,4 @@ extern int32_t FP_Sin(int32_t);
 #define FP_Tan(A)       (FP_Division(FP_Sin(A), FP_Cos(A)))
 
 #endif //FIX_H
+

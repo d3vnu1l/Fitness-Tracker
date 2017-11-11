@@ -36,3 +36,4 @@ void initChooseWeight(void);
 void updateChooseWeight(int, int);
 
 #endif
+

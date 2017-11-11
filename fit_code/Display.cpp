@@ -1,11 +1,11 @@
 #include "Display.h"
 #include <Arduino.h>
-#include "libraries/Adafruit-GFX-Library/Adafruit_GFX.h"    // Core graphics library
-#include "libraries\Adafruit-ST7735-Library-master\Adafruit_ST7735.h" // Hardware-specific library
+#include <Adafruit_GFX.h>    // Core graphics library
+#include <Adafruit_ST7735.h> // Hardware-specific library
 //#include <SPI.h>
 #include <Fonts/FreeMonoBoldOblique18pt7b.h>
 #include <Fonts/FreeSerif9pt7b.h> 
-#include "resources\bitmaps.h"
+#include "bitmaps.h"
 #include <avr/pgmspace.h>
 #include "dmp.h"
 
@@ -503,5 +503,6 @@ void destroyScreen(void) {
 	init_ed = false;
 	tft.fillCircle(64, 64, 64, BLACK);
 }
+
 
 

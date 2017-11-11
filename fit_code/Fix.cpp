@@ -41,7 +41,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <avr/io.h>
 #include <stdlib.h>
 #include <string.h>
-#include "fix.h"
+#include "Fix.h"
 
 #define MAX_STRING_SIZE 8
 
@@ -351,5 +351,6 @@ int32_t _FP_SquareRoot(int32_t val, int32_t Q) {
 	else
 		return(sval >> (Q - 15));
 }
+
 
 
