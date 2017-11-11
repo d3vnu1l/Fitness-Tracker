@@ -6,7 +6,7 @@
 #include "eepromUtilities.h"
 #include "blueTooth.h"
 #include "Display.h"
-#include "prescaler.h"
+//#include "prescaler.h"
 #include "EEPROM.h"
 #include <Arduino.h>
 
@@ -44,7 +44,7 @@ unsigned int data_ptr = 0;
 // ===                         MAIN                             ===
 // ================================================================
 void setup() {
-  setClockPrescaler(1);  //sim 8mhz, for dev board only
+  //setClockPrescaler(1);  //sim 8mhz, for dev board only
   attachInterrupt(digitalPinToInterrupt(3), encoderInterrupt, CHANGE);
   pinMode(ENCODERPINA, INPUT);
   pinMode(ENCODERPINB, INPUT);
